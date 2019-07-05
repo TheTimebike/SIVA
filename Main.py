@@ -20,7 +20,6 @@ class Requests:
     def __init__(self, api_token=None):
         self.api_token = api_token
         self.headers = {"X-API-Key": self.api_token}
-        #self.session = session
 
     def get(self, request):
         print(request)
@@ -32,7 +31,10 @@ client_id = '596381603522150421'
 RPC = Presence(client_id) 
 RPC.connect()
 
-requests = Requests()
+with open("config.json", "r") as out:
+    config = json.load(out)
+
+requests = Requests(config["api_token"])
 decoder = Decoder()
 
 while True:
@@ -48,16 +50,23 @@ while True:
     with open("test2.txt", "w+") as out:
         json.dump(mode_data, out, indent=4)
 
-    details = "In Orbit"
+    details, state = "In Orbit", ""
     print(mode_data)
+    if activity_data_decoded["isPvp"]:
+        state += "Crucible, "
     if mode_data != None:
         details = mode_data["displayProperties"]["name"]
-    state = activity_data_decoded["displayProperties"].get("name", "In Orbit")
+    state += activity_data_decoded["displayProperties"].get("name", "In Orbit")
+
+    party_size = [
+        1,
+        int(activity_data_decoded["matchmaking"]["maxParty"])
+    ]
 
     RPC.update(
         state=state, details=details,
         large_image="willsmith", large_text="Placeholder", 
         small_image="destiny2_logo", small_text="Destiny 2",
-        party_size=[1,6], start=time.time()
+        party_size=party_size, start=time.time()
     )
     time.sleep(15)

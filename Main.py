@@ -62,22 +62,38 @@ while True:
         remove_list = [",", "(", ")"]
         for char in remove_list:
             picture = picture.replace(char, "")
-        
-        swap_conversion_table = {
-            "the_menagerie:_the_menagerie_heroic": "the_menagerie",
-            "zero_hour_heroic": "zero_hour",
-            "landing_zone": "mercury",
-            "leviathan:_normal": "leviathan",
-            "leviathan:_prestige": "leviathan"
-        }
+    
         print(picture)
+        print(details)
+        print(state)
 
     if activity_data_decoded["isPvP"]:
         details = "Crucible, " + mode_data["displayProperties"]["name"]
         picture = "crucible"
 
+    swap_conversion_table = {
+        "the_menagerie:_the_menagerie_heroic": "the_menagerie",
+        "zero_hour_heroic": "zero_hour",
+        "landing_zone": "mercury",
+        "leviathan:_normal": "leviathan",
+        "leviathan:_prestige": "leviathan",
+        "the_reckoning:_tier_i": "the_reckoning",
+        "the_reckoning:_tier_ii": "the_reckoning",
+        "the_reckoning:_tier_iii": "the_reckoning",
+        "last_wish:_level_55": "last_wish"
+    }
+
+    user_conversion_table = {
+        "Last Wish: Level 55": "Last Wish",
+        "The Menagerie: The Menagerie (Heroic)": "The Menagerie: (Heroic)",
+        "Landing Zone": "Mercury"
+
+    }
+
+    print(swap_conversion_table.get(picture, picture))
+    print(user_conversion_table.get(state, state))
     RPC.update(
-        state=state, details=details,
+        state=user_conversion_table.get(state, state), details=details,
         large_image=swap_conversion_table.get(picture, picture),
         small_image="destiny2_logo", small_text="Destiny 2"
     )

@@ -80,7 +80,8 @@ while True:
         "the_reckoning:_tier_i": "the_reckoning",
         "the_reckoning:_tier_ii": "the_reckoning",
         "the_reckoning:_tier_iii": "the_reckoning",
-        "last_wish:_level_55": "last_wish"
+        "last_wish:_level_55": "last_wish",
+        "crown_of_sorrow:_normal": "crown_of_sorrows"
     }
 
     user_conversion_table = {

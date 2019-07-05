@@ -111,7 +111,6 @@ while True:
         "Landing Zone": "Mercury"
 
     }
-
     print(swap_conversion_table.get(picture, picture))
     print(user_conversion_table.get(state, state))
     RPC.update(
@@ -120,4 +119,4 @@ while True:
         small_image="destiny2_logo", small_text="Destiny 2",
         start=timer
     )
-    time.sleep(15)
+    time.sleep(30)

@@ -8,6 +8,7 @@ from manifest import Manifest
 
 BASE_ROUTE = "https://www.bungie.net/Platform"
 ACTIVITY_LOOKUP = BASE_ROUTE + "/Destiny2/{0}/Profile/{1}/Character/{2}/?components=CharacterActivities"
+CHARACTER_LOOKUP = BASE_ROUTE + "/Destiny2/{0}/Profile/{1}/?components=Characters"
 
 class Decoder:
     def __init__(self):
@@ -27,6 +28,24 @@ class Requests:
         self._requestData = _data.json()
         return self._requestData
 
+def get_last_played_id(membershipType, membershipID):
+    url = CHARACTER_LOOKUP.format(membershipType, membershipID)
+    character_data = requests.get(url)
+    epoch_character_table = {}
+    for key, attr in character_data["Response"]["characters"]["data"].items():
+        epoch_character_table[convert_datestring_to_epoch(attr["dateLastPlayed"])] = key
+    
+    for epoch, id in epoch_character_table.items():
+        if epoch == max(epoch_character_table.keys()):
+            return id
+
+def convert_datestring_to_epoch(datestring):
+    datetime_string = datestring.replace("Z", "").replace("T", " ")
+    target_timestamp = time.strptime(datetime_string, '%Y-%m-%d %H:%M:%S')
+    mktime_epoch = time.mktime(target_timestamp)
+    return mktime_epoch + 3382
+    
+
 client_id = '596381603522150421'
 RPC = Presence(client_id) 
 RPC.connect()
@@ -38,12 +57,14 @@ requests = Requests(config["api_token"])
 decoder = Decoder()
 
 while True:
-    activity_data = requests.get(ACTIVITY_LOOKUP.format("4", "4611686018468394612", "2305843009343475210"))
+    activity_data = requests.get(ACTIVITY_LOOKUP.format("4", "4611686018468394612", get_last_played_id("4", "4611686018468394612")))
     activity_hash = activity_data["Response"]["activities"]["data"]["currentActivityHash"]
     activity_data_decoded = decoder.decode_hash(activity_hash, "DestinyActivityDefinition", "en")
 
     mode_hash = activity_data["Response"]["activities"]["data"]["currentActivityModeHash"]
     mode_data = decoder.decode_hash(mode_hash, "DestinyActivityModeDefinition", "en")
+
+    timer = convert_datestring_to_epoch(activity_data["Response"]["activities"]["data"]["dateActivityStarted"])
 
     with open("test.txt", "w+") as out:
         json.dump(activity_data_decoded, out, indent=4)
@@ -67,9 +88,9 @@ while True:
         print(details)
         print(state)
 
-    if activity_data_decoded["isPvP"]:
-        details = "Crucible, " + mode_data["displayProperties"]["name"]
-        picture = "crucible"
+        if activity_data_decoded["isPvP"]:
+            details = "Crucible, " + mode_data["displayProperties"]["name"]
+            picture = "crucible"
 
     swap_conversion_table = {
         "the_menagerie:_the_menagerie_heroic": "the_menagerie",
@@ -96,6 +117,7 @@ while True:
     RPC.update(
         state=user_conversion_table.get(state, state), details=details,
         large_image=swap_conversion_table.get(picture, picture),
-        small_image="destiny2_logo", small_text="Destiny 2"
+        small_image="destiny2_logo", small_text="Destiny 2",
+        start=timer
     )
     time.sleep(15)

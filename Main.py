@@ -28,14 +28,13 @@ class Requests:
         self._requestData = _data.json()
         return self._requestData
 
-#class Main:
-#    def __init__(self):
-
-client_id = '596381603522150421'  # Fake ID, put your real one here
-RPC = Presence(client_id)  # Initialize the client class
+client_id = '596381603522150421'
+RPC = Presence(client_id) 
 RPC.connect()
+
 requests = Requests()
 decoder = Decoder()
+
 while True:
     activity_data = requests.get(ACTIVITY_LOOKUP.format("4", "4611686018468394612", "2305843009343475210"))
     activity_hash = activity_data["Response"]["activities"]["data"]["currentActivityHash"]
@@ -55,8 +54,6 @@ while True:
         details = mode_data["displayProperties"]["name"]
     state = activity_data_decoded["displayProperties"].get("name", "In Orbit")
 
-    
-    
     RPC.update(
         state=state, details=details,
         large_image="willsmith", large_text="Placeholder", 

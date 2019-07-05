@@ -50,23 +50,29 @@ while True:
     with open("test2.txt", "w+") as out:
         json.dump(mode_data, out, indent=4)
 
-    details, state = "In Orbit", ""
-    print(mode_data)
-    if activity_data_decoded["isPvp"]:
-        state += "Crucible, "
+    # Default Arguments
+    details, state = "In Orbit", "In Orbit"
+    party_size = [1,1]
+    picture = "in_orbit"
+
     if mode_data != None:
         details = mode_data["displayProperties"]["name"]
-    state += activity_data_decoded["displayProperties"].get("name", "In Orbit")
+        state = activity_data_decoded["displayProperties"].get("name", "In Orbit")
+        picture = activity_data_decoded["displayProperties"]["name"].lower().replace(" ", "_").replace(",", "")
+        print(picture)
+        party_size = [
+            1,
+            int(activity_data_decoded["matchmaking"]["maxParty"])
+        ]
 
-    party_size = [
-        1,
-        int(activity_data_decoded["matchmaking"]["maxParty"])
-    ]
+    if activity_data_decoded["isPvP"]:
+        details = "Crucible, " + mode_data["displayProperties"]["name"]
+        picture = "crucible"
 
     RPC.update(
         state=state, details=details,
-        large_image="willsmith", large_text="Placeholder", 
+        large_image=picture, 
         small_image="destiny2_logo", small_text="Destiny 2",
-        party_size=party_size, start=time.time()
+        party_size=party_size
     )
     time.sleep(15)

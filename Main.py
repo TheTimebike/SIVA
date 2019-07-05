@@ -58,12 +58,19 @@ while True:
     if mode_data != None:
         details = mode_data["displayProperties"]["name"]
         state = activity_data_decoded["displayProperties"].get("name", "In Orbit")
-        picture = activity_data_decoded["displayProperties"]["name"].lower().replace(" ", "_").replace(",", "")
+        picture = activity_data_decoded["displayProperties"]["name"].lower().replace(" ", "_")
+        remove_list = [",", "(", ")"]
+        for char in remove_list:
+            picture = picture.replace(char, "")
+        
+        swap_conversion_table = {
+            "the_menagerie:_the_menagerie_heroic": "the_menagerie",
+            "zero_hour_heroic": "zero_hour",
+            "landing_zone": "mercury",
+            "leviathan:_normal": "leviathan",
+            "leviathan:_prestige": "leviathan"
+        }
         print(picture)
-        party_size = [
-            1,
-            int(activity_data_decoded["matchmaking"]["maxParty"])
-        ]
 
     if activity_data_decoded["isPvP"]:
         details = "Crucible, " + mode_data["displayProperties"]["name"]
@@ -71,8 +78,7 @@ while True:
 
     RPC.update(
         state=state, details=details,
-        large_image=picture, 
-        small_image="destiny2_logo", small_text="Destiny 2",
-        party_size=party_size
+        large_image=swap_conversion_table.get(picture, picture),
+        small_image="destiny2_logo", small_text="Destiny 2"
     )
     time.sleep(15)

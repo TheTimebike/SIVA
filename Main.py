@@ -9,10 +9,11 @@ from manifest import Manifest
 BASE_ROUTE = "https://www.bungie.net/Platform"
 ACTIVITY_LOOKUP = BASE_ROUTE + "/Destiny2/{0}/Profile/{1}/Character/{2}/?components=CharacterActivities"
 CHARACTER_LOOKUP = BASE_ROUTE + "/Destiny2/{0}/Profile/{1}/?components=Characters"
+MEMBERSHIP_ID_LOOKUP = BASE_ROUTE + "/Destiny2/SearchDestinyPlayer/{0}/{1}"
 
 class Decoder:
-    def __init__(self):
-        self._manifest = Manifest(requests.headers)
+    def __init__(self, headers):
+        self._manifest = Manifest(headers)
 
     def decode_hash(self, hash, definition, language):
         return self._manifest._decode_hash(hash, definition, language)
@@ -25,10 +26,11 @@ class Requests:
     def get(self, request):
         print(request)
         _data = _requests.get(urllib.parse.quote(request, safe=':/?&=,.'), headers=self.headers)
+        print(_data)
         self._requestData = _data.json()
         return self._requestData
 
-def get_last_played_id(membershipType, membershipID):
+def get_last_played_id(membershipType, membershipID, requests):
     url = CHARACTER_LOOKUP.format(membershipType, membershipID)
     character_data = requests.get(url)
     epoch_character_table = {}
@@ -45,7 +47,7 @@ def convert_datestring_to_epoch(datestring):
     mktime_epoch = time.mktime(target_timestamp)
     return mktime_epoch + 3382
     
-def Main(packaged_data)
+def Main(packaged_data):
     client_id = '596381603522150421'
     RPC = Presence(client_id) 
     RPC.connect()
@@ -57,16 +59,30 @@ def Main(packaged_data)
         config = json.load(out)
 
     platform_enum_conversion_table = {
-        "Playstation": "",
-        "Xbox": "",
+        "Playstation": "2",
+        "Xbox": "1",
         "BattleNet": "4"
     }
 
     requests = Requests(config["api_token"])
-    decoder = Decoder()
+    decoder = Decoder(requests.headers)
+
+    user_membership_type = platform_enum_conversion_table[config["platform"]]
+    user_membership_id = requests.get(MEMBERSHIP_ID_LOOKUP.format(user_membership_type, config["username"]))["Response"][0]["membershipId"]
+    print(user_membership_id)
 
     while True:
-        activity_data = requests.get(ACTIVITY_LOOKUP.format("4", "4611686018468394612", get_last_played_id("4", "4611686018468394612")))
+        activity_data = requests.get(
+            ACTIVITY_LOOKUP.format(
+                user_membership_type, 
+                user_membership_id, 
+                get_last_played_id(
+                    user_membership_type, 
+                    user_membership_id,
+                    requests
+                    )
+                )
+            )
         activity_hash = activity_data["Response"]["activities"]["data"]["currentActivityHash"]
         activity_data_decoded = decoder.decode_hash(activity_hash, "DestinyActivityDefinition", "en")
 

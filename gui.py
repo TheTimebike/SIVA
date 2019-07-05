@@ -67,13 +67,13 @@ class Interface(Frame):
 
     def start_service(self):
         packaged_data = {
-            "api_token": self.token_box.get()
-            "platform": self.option_menu.get()
+            "api_token": self.token_box.get(),
+            "platform": self.option_menu_default.get(),
             "username":self.username_box.get()
         }
         Main(packaged_data)
 
-if __name__ == "__main__": #def start():
+def start():
     root = Tk()
     root.geometry("540x170")
     interface = Interface(root)

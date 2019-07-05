@@ -24,9 +24,7 @@ class Requests:
         self.headers = {"X-API-Key": self.api_token}
 
     def get(self, request):
-        print(request)
         _data = _requests.get(urllib.parse.quote(request, safe=':/?&=,.'), headers=self.headers)
-        print(_data)
         self._requestData = _data.json()
         return self._requestData
 
@@ -69,7 +67,6 @@ def Main(packaged_data):
 
     user_membership_type = platform_enum_conversion_table[config["platform"]]
     user_membership_id = requests.get(MEMBERSHIP_ID_LOOKUP.format(user_membership_type, config["username"]))["Response"][0]["membershipId"]
-    print(user_membership_id)
 
     while True:
         activity_data = requests.get(
@@ -91,11 +88,6 @@ def Main(packaged_data):
 
         timer = convert_datestring_to_epoch(activity_data["Response"]["activities"]["data"]["dateActivityStarted"])
 
-        with open("test.txt", "w+") as out:
-            json.dump(activity_data_decoded, out, indent=4)
-        with open("test2.txt", "w+") as out:
-            json.dump(mode_data, out, indent=4)
-
         # Default Arguments
         details, state = "In Orbit", "In Orbit"
         party_size = [1,1]
@@ -108,10 +100,6 @@ def Main(packaged_data):
             remove_list = [",", "(", ")"]
             for char in remove_list:
                 picture = picture.replace(char, "")
-        
-            print(picture)
-            print(details)
-            print(state)
 
             if activity_data_decoded["isPvP"]:
                 details = "Crucible, " + mode_data["displayProperties"]["name"]
@@ -136,8 +124,7 @@ def Main(packaged_data):
             "Landing Zone": "Mercury"
 
         }
-        print(swap_conversion_table.get(picture, picture))
-        print(user_conversion_table.get(state, state))
+
         RPC.update(
             state=user_conversion_table.get(state, state), details=details,
             large_image=swap_conversion_table.get(picture, picture),

@@ -1,5 +1,6 @@
 from tkinter import *
 from Main import Main
+import threading
 
 class Interface(Frame):
     def __init__(self, master=None):
@@ -65,13 +66,17 @@ class Interface(Frame):
         )
         self.label_3.place(x=460, y=40)
 
+        
+
     def start_service(self):
         packaged_data = {
             "api_token": self.token_box.get(),
             "platform": self.option_menu_default.get(),
             "username":self.username_box.get()
         }
-        Main(packaged_data)
+        self.thread = threading.Thread(target=Main, args=(packaged_data,))
+        self.thread.daemon = True
+        self.thread.start()
 
 def start():
     root = Tk()

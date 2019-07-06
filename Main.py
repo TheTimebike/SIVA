@@ -1,15 +1,37 @@
-import asyncio, json, urllib.parse, http.cookies
+import json, urllib.parse, http.cookies
 http.cookies._is_legal_key = lambda _: True
 import requests as _requests
 from pypresence import Presence
-from datetime import datetime
-import time, threading
+import time
+from os import mkdir, path
 from manifest import Manifest
 
 BASE_ROUTE = "https://www.bungie.net/Platform"
 ACTIVITY_LOOKUP = BASE_ROUTE + "/Destiny2/{0}/Profile/{1}/Character/{2}/?components=CharacterActivities"
 CHARACTER_LOOKUP = BASE_ROUTE + "/Destiny2/{0}/Profile/{1}/?components=Characters"
 MEMBERSHIP_ID_LOOKUP = BASE_ROUTE + "/Destiny2/SearchDestinyPlayer/{0}/{1}"
+
+class Setup:
+    def __init__(self):
+        self.folder_filepath = "./siva_files/"
+        self.make_folder()
+
+    def make_folder(self):
+        if not os.path.exists(self.folder_filepath):
+            os.mkdir(self.folder_filepath)
+
+class Config:
+    def __init__(self):
+        self.filepath = "./siva_files/config.json"
+
+    def load(self):
+        with open(self.filepath, "r") as out:
+            config = json.load(out)
+        return config
+
+    def save(self, new_config):
+        with open(self.filepath, "w+") as out:
+            json.dump(new_config, out, indent=4)
 
 class Decoder:
     def __init__(self, headers):
@@ -46,15 +68,14 @@ def convert_datestring_to_epoch(datestring):
     return mktime_epoch + 3382
     
 def Main(packaged_data):
+    Setup()
+
     client_id = '596381603522150421'
     RPC = Presence(client_id) 
     RPC.connect()
 
-    with open("config.json", "w+") as out:
-        json.dump(packaged_data, out, indent=4)
-
-    with open("config.json", "r") as out:
-        config = json.load(out)
+    Config().save(packaged_data)
+    config = Config().load()
 
     platform_enum_conversion_table = {
         "Playstation": "2",
@@ -91,7 +112,7 @@ def Main(packaged_data):
         # Default Arguments
         details, state = "In Orbit", "In Orbit"
         party_size = [1,1]
-        picture = "in_orbit"
+        picture, timer = "in_orbit", time.time()
 
         if mode_data != None:
             details = mode_data["displayProperties"]["name"]

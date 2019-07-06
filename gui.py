@@ -1,6 +1,6 @@
-from tkinter import *
+from tkinter import Frame, Label, OptionMenu, Entry, Button, Tk, StringVar
 from Main import Main
-import threading
+from threading import Thread
 
 class Interface(Frame):
     def __init__(self, master=None):

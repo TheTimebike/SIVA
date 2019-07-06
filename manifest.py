@@ -5,17 +5,7 @@ class Manifest:
 	def __init__(self, headers=None):
 		self.headers = headers
 		self.manifests = {
-			'en': '', 
-			'fr': '', 
-			'es': '', 
-			'de': '', 
-			'it': '', 
-			'ja': '', 
-			'pt-br': '', 
-			'es-mx': '',
-			'ru': '', 
-			'pl': '', 
-			'zh-cht': ''
+			'en': ''
 		}
 		
 	def _decode_hash(self, hash, definition, language):
@@ -42,31 +32,24 @@ class Manifest:
 			print("Language Not Found")
 		
 		manifestJson = requests.get("https://www.bungie.net/Platform"+"/Destiny2/Manifest/", headers=self.headers).json()
-		print(manifestJson)
 		manifestUrl = 'https://www.bungie.net' + manifestJson['Response']['mobileWorldContentPaths'][language]
-		manifestFileName = manifestUrl.split('/')[-1]
+		manifestFileName = "./siva_files/" + manifestUrl.split('/')[-1]
 		
 		if not os.path.isfile(manifestFileName):
 			downloadedFileName = self._download_manifest(manifestUrl)
-			if os.path.isfile("./{0}".format("manifest")):
-				zip = zipfile.ZipFile("./{0}".format("manifest"), "r")
-				zip.extractall("./")
+			if os.path.isfile("./{0}".format("siva_files/manifest")):
+				zip = zipfile.ZipFile("./{0}".format("siva_files/manifest"), "r")
+				zip.extractall("./siva_files/")
 				zip.close()
-				os.remove("manifest")
 				
 		self.manifests[language] = manifestFileName
 		
 	def _download_manifest(self, request):
 		_data = requests.get(request, headers=self.headers)
-		#print(_data.content)
-		downloadTarget = os.path.basename("manifest")
+		downloadTarget = "./siva_files/manifest"
 		with open(downloadTarget, "wb") as out:
-			#while True:
-			#	dataChunk = _data.content.read(1024)
-			#	if not dataChunk:
-			#		break
 			out.write(_data.content)
-		return "manifest"
+		return downloadTarget
 
 	def _bumpAlong(self, val):
 		val = int(val)

@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Siva
+siva_files/
+
 # C extensions
 *.so
 

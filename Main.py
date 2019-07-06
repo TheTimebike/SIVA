@@ -33,7 +33,7 @@ class Config:
         return _data.json()
 
     def get_platform_conversion_table(self):
-        _data = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/name_conversion_table.json")
+        _data = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/platform_conversion_table.json")
         return _data.json()        
 
 class Decoder:

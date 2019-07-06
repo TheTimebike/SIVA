@@ -8,7 +8,7 @@ The majority of SIVA's settings are server-side, and not included in the actual 
 
 ## How To Install?
 
-[SIVA does not need to install itself, as it runs from a single-file application which can be downloaded here.][https://github.com/TheTimebike/SIVA/releases/)
+[SIVA does not need to install itself, as it runs from a single-file application which can be downloaded here.](https://github.com/TheTimebike/SIVA/releases/)
 
 ## What Do I Need To Run It?
 

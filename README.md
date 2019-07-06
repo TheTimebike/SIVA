@@ -17,6 +17,8 @@ SIVA is built to be lightweight, and should be compatible with most Windows syst
 [SIVA also requires an API token, which can be gotten by creating an application here.](https://www.bungie.net/en/Application)
 Copy the API key into SIVA, include your platform and username, and SIVA should be ready to run.
 
+If you are on PC using BattleNet, ensure to include your battle-tag. For example: TheTimebike#2349
+
 ## Interface
 
 ![Interface](https://raw.githubusercontent.com/TheTimebike/SIVA/master/images/interface.png)

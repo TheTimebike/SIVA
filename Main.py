@@ -28,8 +28,12 @@ class Config:
         _data = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/image_conversion_table.json")
         return _data.json()
 
-    def get_name_conversion_table(self):
-        _data = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/name_conversion_table.json")
+    def get_state_conversion_table(self):
+        _data = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/state_conversion_table.json")
+        return _data.json()
+
+    def get_details_conversion_table(self):
+        _data = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/details_conversion_table.json")
         return _data.json()
 
     def get_platform_conversion_table(self):
@@ -87,8 +91,9 @@ def Main(packaged_data):
     user_membership_id = requests.get(MEMBERSHIP_ID_LOOKUP.format(user_membership_type, config["username"]))["Response"][0]["membershipId"]
 
     while True:
-        swap_conversion_table = Config().get_image_conversion_table()
-        user_conversion_table = Config().get_name_conversion_table()
+        image_conversion_table = Config().get_image_conversion_table()
+        state_conversion_table = Config().get_state_conversion_table()
+        details_conversion_table = Config().get_details_conversion_table()
 
         activity_data = requests.get(
             ACTIVITY_LOOKUP.format(
@@ -126,7 +131,8 @@ def Main(packaged_data):
                 picture = "crucible"
 
         RPC.update(
-            state=user_conversion_table.get(state, state), details=details,
+            state=state_conversion_table.get(state, state), 
+            details=details_conversion_table.get(details, details),
             large_image=swap_conversion_table.get(picture, picture),
             small_image="destiny2_logo", small_text="Destiny 2",
             start=timer

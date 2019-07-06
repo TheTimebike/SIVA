@@ -24,6 +24,18 @@ class Config:
         with open(self.filepath, "w+") as out:
             json.dump(new_config, out, indent=4)
 
+    def get_image_conversion_table(self):
+        _data = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/image_conversion_table.json")
+        return _data.json()
+
+    def get_name_conversion_table(self):
+        _data = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/name_conversion_table.json")
+        return _data.json()
+
+    def get_platform_conversion_table(self):
+        _data = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/name_conversion_table.json")
+        return _data.json()        
+
 class Decoder:
     def __init__(self, headers):
         self._manifest = Manifest(headers)
@@ -66,11 +78,9 @@ def Main(packaged_data):
     Config().save(packaged_data)
     config = Config().load()
 
-    platform_enum_conversion_table = {
-        "Playstation": "2",
-        "Xbox": "1",
-        "BattleNet": "4"
-    }
+    platform_enum_conversion_table = Config().get_platform_conversion_table()
+    swap_conversion_table = Config().get_image_conversion_table()
+    user_conversion_table = Config().get_name_conversion_table()
 
     requests = Requests(config["api_token"])
     decoder = Decoder(requests.headers)
@@ -113,26 +123,6 @@ def Main(packaged_data):
             if activity_data_decoded["isPvP"]:
                 details = "Crucible, " + mode_data["displayProperties"]["name"]
                 picture = "crucible"
-
-        swap_conversion_table = {
-            "the_menagerie:_the_menagerie_heroic": "the_menagerie",
-            "zero_hour_heroic": "zero_hour",
-            "landing_zone": "mercury",
-            "leviathan:_normal": "leviathan",
-            "leviathan:_prestige": "leviathan",
-            "the_reckoning:_tier_i": "the_reckoning",
-            "the_reckoning:_tier_ii": "the_reckoning",
-            "the_reckoning:_tier_iii": "the_reckoning",
-            "last_wish:_level_55": "last_wish",
-            "crown_of_sorrow:_normal": "crown_of_sorrows"
-        }
-
-        user_conversion_table = {
-            "Last Wish: Level 55": "Last Wish",
-            "The Menagerie: The Menagerie (Heroic)": "The Menagerie: (Heroic)",
-            "Landing Zone": "Mercury"
-
-        }
 
         RPC.update(
             state=user_conversion_table.get(state, state), details=details,

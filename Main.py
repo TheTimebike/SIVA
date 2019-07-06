@@ -79,8 +79,6 @@ def Main(packaged_data):
     config = Config().load()
 
     platform_enum_conversion_table = Config().get_platform_conversion_table()
-    swap_conversion_table = Config().get_image_conversion_table()
-    user_conversion_table = Config().get_name_conversion_table()
 
     requests = Requests(config["api_token"])
     decoder = Decoder(requests.headers)
@@ -89,6 +87,9 @@ def Main(packaged_data):
     user_membership_id = requests.get(MEMBERSHIP_ID_LOOKUP.format(user_membership_type, config["username"]))["Response"][0]["membershipId"]
 
     while True:
+        swap_conversion_table = Config().get_image_conversion_table()
+        user_conversion_table = Config().get_name_conversion_table()
+
         activity_data = requests.get(
             ACTIVITY_LOOKUP.format(
                 user_membership_type, 

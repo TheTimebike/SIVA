@@ -1,6 +1,8 @@
 from tkinter import Frame, Label, OptionMenu, Entry, Button, Tk, StringVar
 from Main import Main
 from threading import Thread
+from requests import get
+from os import path, mkdir
 
 class Interface(Frame):
     def __init__(self, master=None):
@@ -74,7 +76,7 @@ class Interface(Frame):
             "platform": self.option_menu_default.get(),
             "username":self.username_box.get()
         }
-        self.thread = threading.Thread(target=Main, args=(packaged_data,))
+        self.thread = Thread(target=Main, args=(packaged_data,))
         self.thread.daemon = True
         self.thread.start()
 
@@ -83,4 +85,15 @@ def start():
     root.geometry("540x170")
     interface = Interface(root)
     root.resizable(False, False)
+
+    if not path.exists("./siva_files/"):
+        mkdir("./siva_files")
+
+    if not path.isfile("./siva_files/icon.ico"):
+        url = "https://raw.githubusercontent.com/TheTimebike/SIVA/master/SIVA.ico"
+        _data = get(url)
+        if _data.status_code == 200:
+            with open("./siva_files/icon.ico", 'wb') as f:
+                f.write(_data.content)
+    root.iconbitmap("./siva_files/icon.ico")
     root.mainloop()

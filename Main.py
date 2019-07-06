@@ -11,15 +11,6 @@ ACTIVITY_LOOKUP = BASE_ROUTE + "/Destiny2/{0}/Profile/{1}/Character/{2}/?compone
 CHARACTER_LOOKUP = BASE_ROUTE + "/Destiny2/{0}/Profile/{1}/?components=Characters"
 MEMBERSHIP_ID_LOOKUP = BASE_ROUTE + "/Destiny2/SearchDestinyPlayer/{0}/{1}"
 
-class Setup:
-    def __init__(self):
-        self.folder_filepath = "./siva_files/"
-        self.make_folder()
-
-    def make_folder(self):
-        if not os.path.exists(self.folder_filepath):
-            os.mkdir(self.folder_filepath)
-
 class Config:
     def __init__(self):
         self.filepath = "./siva_files/config.json"
@@ -68,8 +59,6 @@ def convert_datestring_to_epoch(datestring):
     return mktime_epoch + 3382
     
 def Main(packaged_data):
-    Setup()
-
     client_id = '596381603522150421'
     RPC = Presence(client_id) 
     RPC.connect()

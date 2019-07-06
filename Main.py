@@ -96,8 +96,6 @@ def Main(packaged_data):
         mode_hash = activity_data["Response"]["activities"]["data"]["currentActivityModeHash"]
         mode_data = decoder.decode_hash(mode_hash, "DestinyActivityModeDefinition", "en")
 
-        timer = convert_datestring_to_epoch(activity_data["Response"]["activities"]["data"]["dateActivityStarted"])
-
         # Default Arguments
         details, state = "In Orbit", "In Orbit"
         party_size = [1,1]
@@ -107,6 +105,7 @@ def Main(packaged_data):
             details = mode_data["displayProperties"]["name"]
             state = activity_data_decoded["displayProperties"].get("name", "In Orbit")
             picture = activity_data_decoded["displayProperties"]["name"].lower().replace(" ", "_")
+            timer = convert_datestring_to_epoch(activity_data["Response"]["activities"]["data"]["dateActivityStarted"])
             remove_list = [",", "(", ")"]
             for char in remove_list:
                 picture = picture.replace(char, "")

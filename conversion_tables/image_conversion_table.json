@@ -1,15 +1,15 @@
 {
-    "the_menagerie:_the_menagerie_heroic": "the_menagerie",
+    "the_menagerie_the_menagerie_heroic": "the_menagerie",
     "zero_hour_heroic": "zero_hour",
     "landing_zone": "mercury",
-    "leviathan:_normal": "leviathan",
-    "leviathan:_prestige": "leviathan",
-    "the_reckoning:_tier_i": "the_reckoning",
-    "the_reckoning:_tier_ii": "the_reckoning",
-    "the_reckoning:_tier_iii": "the_reckoning",
-    "last_wish:_level_55": "last_wish",
+    "leviathan_normal": "leviathan",
+    "leviathan_prestige": "leviathan",
+    "the_reckoning_tier_i": "the_reckoning",
+    "the_reckoning_tier_ii": "the_reckoning",
+    "the_reckoning_tier_iii": "the_reckoning",
+    "last_wish_level_55": "last_wish",
     "crown_of_sorrow:_normal": "crown_of_sorrows",
     "broken_courier": "the_dreaming_city",
-    "daily_heroic_story_mission:_1au": "the_almighty",
-    "daily_heroic_story_mission:_unbroken": "european_dead_zone"
+    "daily_heroic_story_mission_1au": "the_almighty",
+    "daily_heroic_story_mission_unbroken": "european_dead_zone"
 }

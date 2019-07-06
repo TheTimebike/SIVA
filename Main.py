@@ -91,53 +91,56 @@ def Main(packaged_data):
     user_membership_id = requests.get(MEMBERSHIP_ID_LOOKUP.format(user_membership_type, config["username"]))["Response"][0]["membershipId"]
 
     while True:
-        image_conversion_table = Config().get_image_conversion_table()
-        state_conversion_table = Config().get_state_conversion_table()
-        details_conversion_table = Config().get_details_conversion_table()
+        try:
+            image_conversion_table = Config().get_image_conversion_table()
+            state_conversion_table = Config().get_state_conversion_table()
+            details_conversion_table = Config().get_details_conversion_table()
 
-        activity_data = requests.get(
-            ACTIVITY_LOOKUP.format(
-                user_membership_type, 
-                user_membership_id, 
-                get_last_played_id(
+            activity_data = requests.get(
+                ACTIVITY_LOOKUP.format(
                     user_membership_type, 
-                    user_membership_id,
-                    requests
+                    user_membership_id, 
+                    get_last_played_id(
+                        user_membership_type, 
+                        user_membership_id,
+                        requests
+                        )
                     )
                 )
+            activity_hash = activity_data["Response"]["activities"]["data"]["currentActivityHash"]
+            activity_data_decoded = decoder.decode_hash(activity_hash, "DestinyActivityDefinition", "en")
+
+            mode_hash = activity_data["Response"]["activities"]["data"]["currentActivityModeHash"]
+            mode_data = decoder.decode_hash(mode_hash, "DestinyActivityModeDefinition", "en")
+
+            # Default Arguments
+            details, state = "In Orbit", "In Orbit"
+            party_size = [1,1]
+            picture, timer = "in_orbit", time.time()
+
+            if mode_data != None:
+
+                details = mode_data["displayProperties"]["name"]
+                state = activity_data_decoded["displayProperties"].get("name", "In Orbit")
+                picture = activity_data_decoded["displayProperties"]["name"].lower().replace(" ", "_")
+                timer = convert_datestring_to_epoch(activity_data["Response"]["activities"]["data"]["dateActivityStarted"])
+                
+                remove_list = [",", "(", ")", ":"]
+                for char in remove_list:
+                    picture = picture.replace(char, "")
+
+                if activity_data_decoded["isPvP"]:
+                    details = "Crucible, " + mode_data["displayProperties"]["name"]
+                    picture = "crucible"
+
+            print(image_conversion_table.get(picture, picture))
+            RPC.update(
+                state=state_conversion_table.get(state, state), 
+                details=details_conversion_table.get(details, details),
+                large_image=image_conversion_table.get(picture, picture),
+                small_image="destiny2_logo", small_text="Destiny 2",
+                start=timer
             )
-        activity_hash = activity_data["Response"]["activities"]["data"]["currentActivityHash"]
-        activity_data_decoded = decoder.decode_hash(activity_hash, "DestinyActivityDefinition", "en")
-
-        mode_hash = activity_data["Response"]["activities"]["data"]["currentActivityModeHash"]
-        mode_data = decoder.decode_hash(mode_hash, "DestinyActivityModeDefinition", "en")
-
-        # Default Arguments
-        details, state = "In Orbit", "In Orbit"
-        party_size = [1,1]
-        picture, timer = "in_orbit", time.time()
-
-        if mode_data != None:
-
-            details = mode_data["displayProperties"]["name"]
-            state = activity_data_decoded["displayProperties"].get("name", "In Orbit")
-            picture = activity_data_decoded["displayProperties"]["name"].lower().replace(" ", "_")
-            timer = convert_datestring_to_epoch(activity_data["Response"]["activities"]["data"]["dateActivityStarted"])
-            
-            remove_list = [",", "(", ")"]
-            for char in remove_list:
-                picture = picture.replace(char, "")
-
-            if activity_data_decoded["isPvP"]:
-                details = "Crucible, " + mode_data["displayProperties"]["name"]
-                picture = "crucible"
-
-        print(picture)
-        RPC.update(
-            state=state_conversion_table.get(state, state), 
-            details=details_conversion_table.get(details, details),
-            large_image=image_conversion_table.get(picture, picture),
-            small_image="destiny2_logo", small_text="Destiny 2",
-            start=timer
-        )
-        time.sleep(30)
+            time.sleep(30)
+        except:
+            pass

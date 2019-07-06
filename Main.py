@@ -132,6 +132,7 @@ def Main(packaged_data):
                 details = "Crucible, " + mode_data["displayProperties"]["name"]
                 picture = "crucible"
 
+        print(picture)
         RPC.update(
             state=state_conversion_table.get(state, state), 
             details=details_conversion_table.get(details, details),

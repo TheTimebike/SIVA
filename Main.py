@@ -118,10 +118,12 @@ def Main(packaged_data):
         picture, timer = "in_orbit", time.time()
 
         if mode_data != None:
+
             details = mode_data["displayProperties"]["name"]
             state = activity_data_decoded["displayProperties"].get("name", "In Orbit")
             picture = activity_data_decoded["displayProperties"]["name"].lower().replace(" ", "_")
             timer = convert_datestring_to_epoch(activity_data["Response"]["activities"]["data"]["dateActivityStarted"])
+            
             remove_list = [",", "(", ")"]
             for char in remove_list:
                 picture = picture.replace(char, "")
@@ -133,7 +135,7 @@ def Main(packaged_data):
         RPC.update(
             state=state_conversion_table.get(state, state), 
             details=details_conversion_table.get(details, details),
-            large_image=swap_conversion_table.get(picture, picture),
+            large_image=image_conversion_table.get(picture, picture),
             small_image="destiny2_logo", small_text="Destiny 2",
             start=timer
         )

@@ -105,7 +105,6 @@ class Main:
 
         while True:
             try:
-                print(self.run)
                 if not self.run:
                     RPC.close()
                     return

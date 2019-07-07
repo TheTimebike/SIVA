@@ -1,4 +1,4 @@
-from tkinter import Frame, Label, OptionMenu, Entry, Button, Tk, StringVar, END
+from tkinter import Frame, Label, OptionMenu, Entry, Button, Tk, StringVar, END, messagebox
 from Main import Main
 from threading import Thread
 from requests import get
@@ -94,9 +94,27 @@ class Interface(Frame):
             "platform": self.option_menu_default.get(),
             "username":self.username_box.get()
         }
-        self.thread = Thread(target=Main, args=(packaged_data,))
+        self._main = Main()
+        self.thread = Thread(target=self._main.start_siva, args=(packaged_data,self))
         self.thread.daemon = True
         self.thread.start()
+
+        self.start_button.config(text="Stop!", command=lambda: self.stop_service())
+
+    def stop_service(self):
+        self._main.run = False
+        self.start_button.config(text="Start!", command=lambda: self.start_service())
+
+    def wrong_credentials(self):
+        self._main.run = False
+        self.start_button.config(text="Start!", command=lambda: self.start_service())
+        messagebox.showinfo("SIVA", "Sorry, but the account could not be found! Please check that you included your Battletag if you play on BattleNet.")
+
+    def wrong_token(self):
+        self._main.run = False
+        self.start_button.config(text="Start!", command=lambda: self.start_service())
+        messagebox.showinfo("SIVA", "Sorry, but the token you provided was invalid! Please check that you included the entire API key. If you dont have one, click the button next to the token box.")
+
 
 def start():
     root = Tk()

@@ -2,7 +2,7 @@ import json, urllib.parse, http.cookies
 http.cookies._is_legal_key = lambda _: True
 import requests as _requests
 from pypresence import Presence
-import time
+import time, datetime
 from os import mkdir, path
 from manifest import Manifest
 
@@ -69,10 +69,10 @@ def get_last_played_id(membershipType, membershipID, requests):
             return id
 
 def convert_datestring_to_epoch(datestring):
-    datetime_string = datestring.replace("Z", "").replace("T", " ")
-    target_timestamp = time.strptime(datetime_string, '%Y-%m-%d %H:%M:%S')
-    mktime_epoch = time.mktime(target_timestamp)
-    return mktime_epoch + 3382
+    unix_epoch = datetime.datetime(1970, 1, 1)
+    log_dt = datetime.datetime.strptime(datestring.replace("T", " ").replace("Z", ""), "%Y-%m-%d %H:%M:%S")
+    seconds_from_epoch = (log_dt - unix_epoch).total_seconds()
+    return seconds_from_epoch
     
 def Main(packaged_data):
     client_id = '596381603522150421'
@@ -91,6 +91,7 @@ def Main(packaged_data):
     user_membership_id = requests.get(MEMBERSHIP_ID_LOOKUP.format(user_membership_type, config["username"]))["Response"][0]["membershipId"]
 
     while True:
+        print("triggered")
         try:
             image_conversion_table = Config().get_image_conversion_table()
             state_conversion_table = Config().get_state_conversion_table()
@@ -143,5 +144,5 @@ def Main(packaged_data):
                 start=timer
             )
             time.sleep(30)
-        except:
-            pass
+        except Exception as ex:
+            print(ex)

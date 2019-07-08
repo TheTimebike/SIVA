@@ -1,0 +1,7 @@
+{
+    "window_name": "SIVA",
+    "version": "0.1.4",
+    "icon_url": "https://raw.githubusercontent.com/TheTimebike/SIVA/master/SIVA.ico",
+    "directory_name": "siva_files",
+    "platforms": ["BattleNet", "Playstation", "Xbox"]
+}

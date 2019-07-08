@@ -25,9 +25,9 @@ class Config:
             json.dump(new_config, out, indent=4)
 
     def get_conversion_table(self, table):
-        _index = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/platform_conversion_table.json")
+        _index = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/index.json")
         _data_url = _index.json()[table]
-        _data = _requests.gt(_data_url)
+        _data = _requests.get(_data_url)
         return _data.json()      
 
 class Decoder:

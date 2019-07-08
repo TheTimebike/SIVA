@@ -9,15 +9,15 @@ import json
 
 
 class Interface(Frame):
-    def __init__(self, master=None):
+    def __init__(self, master=None, data):
         Frame.__init__(self, master)
-        self.master.title("SIVA")
+        self.master.title(data["window_name"])
         self.init_elements()
         self.check_for_config()
 
     def check_for_config(self):
-        if path.isfile("./siva_files/config.json"):
-            with open("./siva_files/config.json", "r") as out:
+        if path.isfile("./{0}/config.json".format(data["directory_name"])):
+            with open("./{0}/config.json".format(data["directory_name"]), "r") as out:
                 self.config = json.load(out)
             
             self.token_box.delete(0,END)
@@ -29,64 +29,31 @@ class Interface(Frame):
             self.username_box.insert(0,self.config["username"])
 
     def init_elements(self):
-        self.label_1 = Label(
-            self.master,
-            text="API Token"
-        )
+        self.label_1 = Label(self.master, text="API Token")
         self.label_1.place(x=315, y=10)
 
-        self.token_box = Entry(
-            self.master,
-            width=50
-        )
+        self.token_box = Entry(self.master, width=50)
         self.token_box.place(x=10, y=10)
 
-        self.token_button = Button(
-            self.master,
-            width=20, height=1,
-            text="How Do I Find This?", 
-            command=lambda: open_new_tab("https://www.bungie.net/en/Application")
-        )
+        self.token_button = Buttonself.master, width=20, height=1, text="How Do I Find This?", command=lambda: open_new_tab("https://www.bungie.net/en/Application"))
         self.token_button.place(x=375, y=9)
 
-        self.start_button = Button(
-            self.master,
-            width=72, height=5,
-            text="Start!", 
-            command=lambda: self.start_service()
-        )
+        self.start_button = Button(self.master, width=72, height=5, text="Start!", command=lambda: self.start_service())
         self.start_button.place(x=10, y=70)
 
         self.option_menu_default = StringVar()
         self.option_menu_default.set("Playstation")
-        self.option_menu = OptionMenu(
-            self.master,
-            self.option_menu_default,
-            "BattleNet", 
-            "Playstation", 
-            "Xbox"
-        )
+        self.option_menu = OptionMenu(self.master, self.option_menu_default, "BattleNet", "Playstation", "Xbox")
         self.option_menu.place(x=8, y=35)
 
-        self.label_2 = Label(
-            self.master,
-            text="Select Platform"
-        )
+        self.label_2 = Label(self.master, text="Select Platform")
         self.label_2.place(x=110, y=40)
 
-        self.username_box = Entry(
-            self.master,
-            width=40
-        )
+        self.username_box = Entry(self.master, width=40)
         self.username_box.place(x=220, y=40)
 
-        self.label_3 = Label(
-            self.master,
-            text="Username"
-        )
+        self.label_3 = Label(self.master, text="Username")
         self.label_3.place(x=460, y=40)
-
-        
 
     def start_service(self):
         packaged_data = {
@@ -106,31 +73,33 @@ class Interface(Frame):
         self.start_button.config(text="Start!", command=lambda: self.start_service())
 
     def get_conversion_table(self, table):
-        _index = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/platform_conversion_table.json")
+        _index = get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/index.json")
         _data_url = _index.json()[table]
-        _data = _requests.gt(_data_url)
+        _data = get(_data_url)
         return _data.json()      
 
-    def wrong_credentials(self, error_enum):
+    def error(self, error_enum):
         self._main.run = False
         self.start_button.config(text="Start!", command=lambda: self.start_service())
         error_conversion_table = self.get_conversion_table("error")
-        messagebox.showinfo(error_conversion_table["error_window_name"], error_conversion_table["error"][error_enum])
+        messagebox.showinfo(error_conversion_table["error_window_name"], error_conversion_table["errors"][error_enum])
 
 def start():
     root = Tk()
     root.geometry("540x170")
-    interface = Interface(root)
+    interface = Interface(root, data)
     root.resizable(False, False)
 
-    if not path.exists("./siva_files/"):
-        mkdir("./siva_files")
+    data = get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/SIVA.ico")
 
-    if not path.isfile("./siva_files/icon.ico"):
-        url = "https://raw.githubusercontent.com/TheTimebike/SIVA/master/SIVA.ico"
-        _data = get(url)
+
+    if not path.exists("./{0}/".format(data["directory_name"])):
+        mkdir("./{0}".format(data["directory_name"]))
+
+    if not path.isfile("./{0}/icon.ico".format(data["directory_name"])):
+        _data = get(data["icon_url"])
         if _data.status_code == 200:
-            with open("./siva_files/icon.ico", 'wb') as f:
+            with open("./{0}/icon.ico".format(data["directory_name"]), 'wb') as f:
                 f.write(_data.content)
-    root.iconbitmap("./siva_files/icon.ico")
+    root.iconbitmap("./{0}/icon.ico".format(data["directory_name"]))
     root.mainloop()

@@ -23,6 +23,10 @@ If you are on PC using BattleNet, ensure to include your battle-tag. For example
 
 ![Interface](https://raw.githubusercontent.com/TheTimebike/SIVA/master/images/interface.png)
 
+As of SIVA version v0.1.5, you can enable a dark mode version.
+
+![Dark Interface](https://raw.githubusercontent.com/TheTimebike/SIVA/master/images/interface_dark.png)
+
 After entering all of the details, press the start button to launch the SIVA service.
 
 ## How Does It Work?

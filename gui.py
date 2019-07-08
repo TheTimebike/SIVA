@@ -1,4 +1,4 @@
-from tkinter import Frame, Label, OptionMenu, Entry, Button, Tk, StringVar, END, messagebox
+from tkinter import Frame, Label, OptionMenu, Entry, Button, Tk, StringVar, END, messagebox, Menu
 from Main import Main
 from threading import Thread
 from requests import get
@@ -11,12 +11,11 @@ import json
 class Interface(Frame):
     def __init__(self, master=None, data={}):
         Frame.__init__(self, master)
-        self.version = "0.1.4"
+        self.version = "0.2"
         self.master.title(data["window_name"])
         self.data = data        
         self.init_elements()
         self.check_for_config()
-        self.dark_mode()
 
     def check_for_config(self):
         if path.isfile("./{0}/config.json".format(self.data["directory_name"])):
@@ -32,6 +31,33 @@ class Interface(Frame):
             self.username_box.insert(0,self.config["username"])
 
     def init_elements(self):
+        self.menubar = Menu(self.master)
+        self.master.config(menu=self.menubar)
+
+        self.menu_dropdown_siva = Menu(self.menubar)
+        self.menu_dropdown_themes = Menu(self.menubar)
+        self.menu_dropdown_links = Menu(self.menubar)
+        self.menu_dropdown_help = Menu(self.menubar)
+
+        self.menu_dropdown_siva.add_command(label="Start", command=lambda: self.start_service())
+        self.menu_dropdown_siva.add_command(label="Stop", command=lambda: self.stop_service())
+
+        self.menu_dropdown_themes.add_command(label="Light Theme", command=lambda: self.light_mode())
+        self.menu_dropdown_themes.add_command(label="Dark Theme", command=lambda: self.dark_mode())
+
+        self.menu_dropdown_links.add_command(label="Get A Token", command=lambda: open_new_tab("https://www.bungie.net/en/Application"))
+        self.menu_dropdown_links.add_command(label="Message Me On Reddit", command=lambda: open_new_tab("https://www.reddit.com/message/compose?to=TheTimebike&subject=SIVA"))
+        self.menu_dropdown_links.add_command(label="Github", command=lambda: open_new_tab("https://github.com/TheTimebike/SIVA"))
+        self.menu_dropdown_links.add_command(label="Report An Issue", command=lambda: open_new_tab("https://github.com/TheTimebike/SIVA/issues"))
+
+        self.menu_dropdown_help.add_command(label="About", command=lambda: messagebox.showinfo("SIVA", "SIVA:\nVersion: {0}\nCreator: u/TheTimebike".format(self.version)))
+
+        self.menubar.add_cascade(label="SIVA", menu=self.menu_dropdown_siva)
+        self.menubar.add_cascade(label="Themes", menu=self.menu_dropdown_themes)
+        self.menubar.add_cascade(label="Links", menu=self.menu_dropdown_links)
+        self.menubar.add_cascade(label="Help", menu=self.menu_dropdown_help)
+
+
         self.label_1 = Label(self.master, text="API Token")
         self.label_1.place(x=315, y=10)
 

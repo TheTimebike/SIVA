@@ -1,0 +1,7 @@
+{
+    "details": "https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/details_conversion_table.json",
+    "error": "",
+    "image": "https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/image_conversion_table.json",
+    "platform": "https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/platform_conversion_table.json",
+    "state": "https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/state_conversion_table.json"
+}

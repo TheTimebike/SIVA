@@ -24,21 +24,9 @@ class Config:
         with open(self.filepath, "w+") as out:
             json.dump(new_config, out, indent=4)
 
-    def get_image_conversion_table(self):
+    def get_conversion_table(self, table):
         _data = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/image_conversion_table.json")
-        return _data.json()
-
-    def get_state_conversion_table(self):
-        _data = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/state_conversion_table.json")
-        return _data.json()
-
-    def get_details_conversion_table(self):
-        _data = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/details_conversion_table.json")
-        return _data.json()
-
-    def get_platform_conversion_table(self):
-        _data = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/platform_conversion_table.json")
-        return _data.json()        
+        return _data.json()       
 
 class Decoder:
     def __init__(self, headers):

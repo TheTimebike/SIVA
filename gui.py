@@ -9,15 +9,18 @@ import json
 
 
 class Interface(Frame):
-    def __init__(self, master=None, data):
+    def __init__(self, master=None, data={}):
         Frame.__init__(self, master)
+        self.version = "0.1.4"
         self.master.title(data["window_name"])
+        self.data = data        
         self.init_elements()
         self.check_for_config()
+        self.dark_mode()
 
     def check_for_config(self):
-        if path.isfile("./{0}/config.json".format(data["directory_name"])):
-            with open("./{0}/config.json".format(data["directory_name"]), "r") as out:
+        if path.isfile("./{0}/config.json".format(self.data["directory_name"])):
+            with open("./{0}/config.json".format(self.data["directory_name"]), "r") as out:
                 self.config = json.load(out)
             
             self.token_box.delete(0,END)
@@ -35,7 +38,7 @@ class Interface(Frame):
         self.token_box = Entry(self.master, width=50)
         self.token_box.place(x=10, y=10)
 
-        self.token_button = Buttonself.master, width=20, height=1, text="How Do I Find This?", command=lambda: open_new_tab("https://www.bungie.net/en/Application"))
+        self.token_button = Button(self.master, width=20, height=1, text="How Do I Find This?", command=lambda: open_new_tab("https://www.bungie.net/en/Application"))
         self.token_button.place(x=375, y=9)
 
         self.start_button = Button(self.master, width=72, height=5, text="Start!", command=lambda: self.start_service())
@@ -44,6 +47,7 @@ class Interface(Frame):
         self.option_menu_default = StringVar()
         self.option_menu_default.set("Playstation")
         self.option_menu = OptionMenu(self.master, self.option_menu_default, "BattleNet", "Playstation", "Xbox")
+        self.option_menu.configure(highlightthickness=0)
         self.option_menu.place(x=8, y=35)
 
         self.label_2 = Label(self.master, text="Select Platform")
@@ -54,6 +58,42 @@ class Interface(Frame):
 
         self.label_3 = Label(self.master, text="Username")
         self.label_3.place(x=460, y=40)
+
+        self.elements = {
+            "labels": [self.label_1, self.label_2, self.label_3],
+            "entrys": [self.username_box, self.token_box],
+            "optionmenus": [self.option_menu],
+            "buttons": [self.start_button, self.token_button]
+        }
+
+    def light_mode(self):
+        text_colour = "black"
+        box_colour = "white"
+        background_colour = "#f0f0f0"
+        self.master.configure(background=background_colour)
+        for element in self.elements["labels"]:
+            element.configure(background=background_colour, foreground=text_colour)
+        for element in self.elements["buttons"]:
+            element.configure(background=background_colour, foreground=text_colour)
+        for element in self.elements["entrys"]:
+            element.configure(background=box_colour, foreground=text_colour)
+        for element in self.elements["optionmenus"]:
+            element.configure(highlightthickness=0, background=background_colour, foreground=text_colour, activebackground=background_colour, activeforeground=text_colour) 
+
+    def dark_mode(self):
+        text_colour = "white"
+        box_colour = "#484b52"
+        background_colour = "#36393f"
+        self.master.configure(background=background_colour)
+        for element in self.elements["labels"]:
+            element.configure(background=background_colour, foreground=text_colour)
+        for element in self.elements["buttons"]:
+            element.configure(background=background_colour, foreground=text_colour)
+        for element in self.elements["entrys"]:
+            element.configure(background=box_colour, foreground=text_colour)
+        for element in self.elements["optionmenus"]:
+            element.configure(highlightthickness=0, background=background_colour, foreground=text_colour, activebackground=background_colour, activeforeground=text_colour) 
+
 
     def start_service(self):
         packaged_data = {
@@ -85,13 +125,11 @@ class Interface(Frame):
         messagebox.showinfo(error_conversion_table["error_window_name"], error_conversion_table["errors"][error_enum])
 
 def start():
+    data = get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/siva.json").json()
     root = Tk()
     root.geometry("540x170")
     interface = Interface(root, data)
     root.resizable(False, False)
-
-    data = get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/SIVA.ico")
-
 
     if not path.exists("./{0}/".format(data["directory_name"])):
         mkdir("./{0}".format(data["directory_name"]))

@@ -1,5 +1,6 @@
 from tkinter import Frame, Label, OptionMenu, Entry, Button, Tk, StringVar, END, messagebox, Menu
 from Main import Main
+from update import update
 from threading import Thread
 from requests import get
 from os import path, mkdir
@@ -11,7 +12,7 @@ import json
 class Interface(Frame):
     def __init__(self, master=None, data={}):
         Frame.__init__(self, master)
-        self.version = "0.2"
+        self.version = "0.2.1"
         self.master.title(data["window_name"])
         self.data = data        
         self.init_elements()
@@ -57,6 +58,8 @@ class Interface(Frame):
         self.menubar.add_cascade(label="Links", menu=self.menu_dropdown_links)
         self.menubar.add_cascade(label="Help", menu=self.menu_dropdown_help)
 
+        if self.data["version"] != self.version:
+            self.menubar.add_command(label="Update", command=lambda:update(self))
 
         self.label_1 = Label(self.master, text="API Token")
         self.label_1.place(x=315, y=10)

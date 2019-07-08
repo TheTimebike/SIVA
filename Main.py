@@ -25,8 +25,10 @@ class Config:
             json.dump(new_config, out, indent=4)
 
     def get_conversion_table(self, table):
-        _data = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/image_conversion_table.json")
-        return _data.json()       
+        _index = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/platform_conversion_table.json")
+        _data_url = _index.json()[table]
+        _data = _requests.gt(_data_url)
+        return _data.json()      
 
 class Decoder:
     def __init__(self, headers):
@@ -45,7 +47,7 @@ class Requests:
         _data = _requests.get(urllib.parse.quote(request, safe=':/?&=,.'), headers=self.headers)
         self._requestData = _data.json()
         if self._requestData.get("ErrorCode", False) == 2101:
-            self.interface.wrong_token()
+            self.interface.error("1")
             return
         return self._requestData
 
@@ -78,7 +80,7 @@ class Main:
         Config().save(packaged_data)
         config = Config().load()
 
-        platform_enum_conversion_table = Config().get_platform_conversion_table()
+        platform_enum_conversion_table = Config().get_conversion_table("platform")
 
         requests = Requests(config["api_token"], interface)
         decoder = Decoder(requests.headers)
@@ -86,7 +88,7 @@ class Main:
         user_membership_type = platform_enum_conversion_table[config["platform"]]
         user_membership_data = requests.get(MEMBERSHIP_ID_LOOKUP.format(user_membership_type, config["username"]))["Response"]
         if len(user_membership_data) == 0:
-            interface.wrong_credentials()
+            interface.error("2")
             return
 
         user_membership_id = user_membership_data[0]["membershipId"]
@@ -98,9 +100,9 @@ class Main:
                     return
 
                 last_played_character = get_last_played_id(user_membership_type, user_membership_id, requests)
-                image_conversion_table = Config().get_image_conversion_table()
-                state_conversion_table = Config().get_state_conversion_table()
-                details_conversion_table = Config().get_details_conversion_table()
+                image_conversion_table = Config().get_conversion_table("image")
+                state_conversion_table = Config().get_conversion_table("state")
+                details_conversion_table = Config().get_conversion_table("details")
 
                 activity_data = requests.get(
                     ACTIVITY_LOOKUP.format(

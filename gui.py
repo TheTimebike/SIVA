@@ -105,16 +105,17 @@ class Interface(Frame):
         self._main.run = False
         self.start_button.config(text="Start!", command=lambda: self.start_service())
 
-    def wrong_credentials(self):
+    def get_conversion_table(self, table):
+        _index = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/platform_conversion_table.json")
+        _data_url = _index.json()[table]
+        _data = _requests.gt(_data_url)
+        return _data.json()      
+
+    def wrong_credentials(self, error_enum):
         self._main.run = False
         self.start_button.config(text="Start!", command=lambda: self.start_service())
-        messagebox.showinfo("SIVA", "Sorry, but the account could not be found! Please check that you included your Battletag if you play on BattleNet.")
-
-    def wrong_token(self):
-        self._main.run = False
-        self.start_button.config(text="Start!", command=lambda: self.start_service())
-        messagebox.showinfo("SIVA", "Sorry, but the token you provided was invalid! Please check that you included the entire API key. If you dont have one, click the button next to the token box.")
-
+        error_conversion_table = self.get_conversion_table("error")
+        messagebox.showinfo(error_conversion_table["error_window_name"], error_conversion_table["error"][error_enum])
 
 def start():
     root = Tk()

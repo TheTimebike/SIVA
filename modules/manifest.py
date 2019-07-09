@@ -1,5 +1,5 @@
 import zipfile, os, sys, aiohttp, json, requests
-from manifest_reader import ManifestReader
+from modules.manifest_reader import ManifestReader
 
 class Manifest:
 	def __init__(self, headers=None):

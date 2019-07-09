@@ -12,8 +12,8 @@ CHARACTER_LOOKUP = BASE_ROUTE + "/Destiny2/{0}/Profile/{1}/?components=Character
 MEMBERSHIP_ID_LOOKUP = BASE_ROUTE + "/Destiny2/SearchDestinyPlayer/{0}/{1}"
 
 class Config:
-    def __init__(self):
-        self.filepath = "./siva_files/config.json"
+    def __init__(self, directory):
+        self.filepath = "./{0}/config.json".format(directory)
 
     def load(self):
         with open(self.filepath, "r") as out:
@@ -69,18 +69,20 @@ def convert_datestring_to_epoch(datestring):
     return seconds_from_epoch
 
 class Main:
-    def __init__(self):
+    def __init__(self, directory):
         self.run = True
+        self.directory = directory
 
     def start_siva(self, packaged_data, interface):
         client_id = '596381603522150421'
         RPC = Presence(client_id)
         RPC.connect()
 
-        Config().save(packaged_data)
-        config = Config().load()
+        configurator = Config(self.directory)
+        configurator.save(packaged_data)
+        config = configurator.load()
 
-        platform_enum_conversion_table = Config().get_conversion_table("platform")
+        platform_enum_conversion_table = configurator.get_conversion_table("platform")
 
         requests = Requests(config["api_token"], interface)
         decoder = Decoder(requests.headers)
@@ -100,9 +102,9 @@ class Main:
                     return
 
                 last_played_character = get_last_played_id(user_membership_type, user_membership_id, requests)
-                image_conversion_table = Config().get_conversion_table("image")
-                state_conversion_table = Config().get_conversion_table("state")
-                details_conversion_table = Config().get_conversion_table("details")
+                image_conversion_table = configurator.get_conversion_table("image")
+                state_conversion_table = configurator.get_conversion_table("state")
+                details_conversion_table = configurator.get_conversion_table("details")
 
                 activity_data = requests.get(
                     ACTIVITY_LOOKUP.format(

@@ -29,6 +29,7 @@ class Config:
         _index = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/index.json")
         _data_url = _index.json()[table]
         _data = _requests.get(_data_url)
+        print(_data)
         return _data.json()      
 
 class Decoder:
@@ -114,7 +115,7 @@ class Main:
                 mode_data = decoder.decode_hash(mode_hash, "DestinyActivityModeDefinition", self.language)
 
                 # Default Arguments
-                orbit_translation = configurator.get_conversion_table("orbit_Translation")[self.language]
+                orbit_translation = configurator.get_conversion_table("orbit_translation")[self.language]
                 details, state = orbit_translation
                 party_size = [1,1]
                 picture, timer = "in_orbit", time.time()

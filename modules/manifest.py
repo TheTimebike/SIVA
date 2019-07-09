@@ -45,7 +45,6 @@ class Manifest:
 			print("Language Not Found")
 		
 		manifestJson = requests.get("https://www.bungie.net/Platform/Destiny2/Manifest/", headers=self.headers).json()
-		print(manifestJson)
 		manifestUrl = 'https://www.bungie.net' + manifestJson['Response']['mobileWorldContentPaths'][language]
 		manifestFileName = "./{0}/".format(self.directory) + manifestUrl.split('/')[-1]
 		

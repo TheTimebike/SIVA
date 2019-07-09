@@ -19,6 +19,29 @@ Copy the API key into SIVA, include your platform and username, and SIVA should 
 
 If you are on PC using BattleNet, ensure to include your battle-tag. For example: TheTimebike#2349
 
+## Multi-Language Support
+
+SIVA now supports multiple languages using data collected directly from the Bungie API, ensuring that all translations are accurate.
+
+Navigate to the "Language" tab to switch to another language. It can take up to 60 seconds for Discord to update to the new language.
+
+![Language](https://raw.githubusercontent.com/TheTimebike/SIVA/master/images/interface_language.png)
+
+SIVA supports:
+English
+Spanish
+Spanish-Mexican
+French
+Italian
+German
+Polish
+Portuguese-Brazillian
+Russian
+Korean
+Japanese
+Chinese Traditional
+Chinese Simplified
+
 ## Interface
 
 ![Interface](https://raw.githubusercontent.com/TheTimebike/SIVA/master/images/interface.png)

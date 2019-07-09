@@ -4,5 +4,6 @@
     "image": "https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/image_conversion_table.json",
     "platform": "https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/platform_conversion_table.json",
     "state": "https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/state_conversion_table.json",
-    "language": "https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/language_conversion_table.json"
+    "language": "https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/language_conversion_table.json",
+    "orbit_translation": "https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/orbit_translation_conversion_table.json"
 }

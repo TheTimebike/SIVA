@@ -112,7 +112,8 @@ class Main:
                 mode_data = decoder.decode_hash(mode_hash, "DestinyActivityModeDefinition", self.language)
 
                 # Default Arguments
-                details, state = "In Orbit", "In Orbit"
+                orbit_translation = configurator.get_conversion_table("orbit_Translation")[self.language]
+                details, state = orbit_translation
                 party_size = [1,1]
                 picture, timer = "in_orbit", time.time()
 

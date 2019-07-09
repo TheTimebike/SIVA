@@ -25,7 +25,7 @@ SIVA now supports multiple languages using data collected directly from the Bung
 
 Navigate to the "Language" tab to switch to another language. It can take up to 60 seconds for Discord to update to the new language.
 
-![Language](https://raw.githubusercontent.com/TheTimebike/SIVA/master/images/interface_language.png)
+![Language](https://raw.githubusercontent.com/TheTimebike/SIVA/master/images/interface_language.PMG)
 
 SIVA supports:
 English

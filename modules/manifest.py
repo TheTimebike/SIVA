@@ -1,8 +1,8 @@
 import zipfile, os, sys, aiohttp, json, requests
-from manifest_reader import ManifestReader
+from modules.manifest_reader import ManifestReader
 
 class Manifest:
-	def __init__(self, headers=None):
+	def __init__(self, directory, headers=None):
 		self.headers = headers
 		self.manifests = {
 			'en': '',
@@ -16,7 +16,6 @@ class Manifest:
 			'ru': '', 
 			'pl': '', 
 			'zh-cht': ''
-}
 		}
 		
 	def _decode_hash(self, hash, definition, language):
@@ -42,22 +41,24 @@ class Manifest:
 		if self.manifests.get(language.lower(), None) == None:
 			print("Language Not Found")
 		
-		manifestJson = requests.get("https://www.bungie.net/Platform"+"/Destiny2/Manifest/", headers=self.headers).json()
+		manifestJson = requests.get("https://www.bungie.net/Platform/Destiny2/Manifest/", headers=self.headers).json()
+		print("here")
+		print(manifestJson['Response']['mobileWorldContentPaths'])
 		manifestUrl = 'https://www.bungie.net' + manifestJson['Response']['mobileWorldContentPaths'][language]
-		manifestFileName = "./siva_files/" + manifestUrl.split('/')[-1]
+		manifestFileName = "./{0}/".format(self.directory) + manifestUrl.split('/')[-1]
 		
 		if not os.path.isfile(manifestFileName):
 			downloadedFileName = self._download_manifest(manifestUrl)
-			if os.path.isfile("./{0}".format("siva_files/manifest")):
-				zip = zipfile.ZipFile("./{0}".format("siva_files/manifest"), "r")
-				zip.extractall("./siva_files/")
+			if os.path.isfile("./{0}/manifest".format(self.directory)):
+				zip = zipfile.ZipFile("./{0}/manifest".format(self.directory), "r")
+				zip.extractall("./{0}/".format(self.directory))
 				zip.close()
 				
 		self.manifests[language] = manifestFileName
 		
 	def _download_manifest(self, request):
 		_data = requests.get(request, headers=self.headers)
-		downloadTarget = "./siva_files/manifest"
+		downloadTarget = "./{0}/manifest".format(self.directory)
 		with open(downloadTarget, "wb") as out:
 			out.write(_data.content)
 		return downloadTarget

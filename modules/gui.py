@@ -1,6 +1,6 @@
 from tkinter import Frame, Label, OptionMenu, Entry, Button, Tk, StringVar, END, messagebox, Menu
-from Main import Main
-from update import update
+from modules.Main import Main
+from modules.update import update
 from threading import Thread
 from requests import get
 from os import path, mkdir
@@ -152,6 +152,7 @@ class Interface(Frame):
         self.start_button.config(text="Start!", command=lambda: self.start_service())
         error_conversion_table = self.get_conversion_table("error")
         messagebox.showinfo(error_conversion_table["error_window_name"], error_conversion_table["errors"][error_enum])
+        return None
 
 def start():
     data = get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/siva.json").json()

@@ -102,7 +102,7 @@ class Interface(Frame):
         }
 
     def add_language(self, lang, key):
-        self.menu_dropdown_language.add_command(label=lang, command=lambda: self.change_language(key))
+        self.menu_dropdown_language.add_radiobutton(label=lang, command=lambda: self.change_language(key))
 
     def change_language(self, key):
         self._main.language = key

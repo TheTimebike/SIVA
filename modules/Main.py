@@ -17,6 +17,8 @@ class Config:
         self.filepath = "./{0}/config.json".format(directory)
 
     def load(self):
+        if not path.isfile(self.filepath):
+            return {}
         with open(self.filepath, "r") as out:
             config = json.load(out)
         return config
@@ -75,19 +77,19 @@ class Main:
         self.directory = directory
         self.configurator = Config(self.directory)
         self.language = self.configurator.load().get("language", "en")
+        
 
-    def start_siva(self, packaged_data, interface):
+    def start_siva(self, interface):
+        
         RPC = Presence('596381603522150421')
         RPC.connect()
 
-        self.configurator.save(packaged_data)
         config = self.configurator.load()
 
         platform_enum_conversion_table = self.configurator.get_conversion_table("platform")
 
         requests = Requests(config["api_token"], interface)
         decoder = Decoder(self.directory, requests.headers)
-
         user_membership_type = platform_enum_conversion_table[config["platform"]]
         user_membership_data = requests.get(MEMBERSHIP_ID_LOOKUP.format(user_membership_type, config["username"]))["Response"]
         if len(user_membership_data) == 0:

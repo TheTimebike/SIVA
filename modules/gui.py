@@ -10,7 +10,7 @@ import json
 class Interface(Frame):
     def __init__(self, master=None, data={}):
         Frame.__init__(self, master)
-        self.version = "0.3.1"
+        self.version = "0.3.2"
         self.master.title(data["window_name"])
         self.data = data    
         self._main = Main(self.data["directory_name"])
@@ -145,13 +145,13 @@ class Interface(Frame):
 
 
     def start_service(self):
-        packaged_data = {
+        self._main.configurator.save({
             "api_token": self.token_box.get(),
             "platform": self.option_menu_default.get(),
             "username": self.username_box.get(),
             "language": self._main.language
-        }
-        self.thread = Thread(target=self._main.start_siva, args=(packaged_data,self))
+        })
+        self.thread = Thread(target=self._main.start_siva, args=(self,))
         self.thread.daemon = True
         self.thread.start()
 

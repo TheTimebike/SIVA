@@ -48,6 +48,8 @@ class Requests:
         self._requestData = _requests.get(urllib.parse.quote(request, safe=':/?&=,.'), headers=self.headers).json()
         if self._requestData.get("ErrorCode", False) == 2101:
             return self.interface.error("1")
+        if self._requestData.get("ErrorCode", False) == 5:
+            return self.interface.error("3")
         return self._requestData
 
 def get_last_played_id(membershipType, membershipID, requests):

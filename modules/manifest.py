@@ -5,9 +5,7 @@ class Manifest:
 	def __init__(self, directory, headers=None):
 		self.headers = headers
 		self.directory = directory
-		self.manifests = {
-			'en': ''
-		}
+		self.manifests = {'en': ''}
 		
 	def _decode_hash(self, hash, definition, language):
 		if self.manifests.get(language.lower(), None) == None:

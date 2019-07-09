@@ -12,10 +12,12 @@ class Interface(Frame):
         Frame.__init__(self, master)
         self.version = "0.3.1"
         self.master.title(data["window_name"])
-        self.data = data        
-        self.init_elements()
-        self.check_for_config()
+        self.data = data    
         self._main = Main(self.data["directory_name"])
+        self.default = StringVar()
+        self.default.set(self._main.language)
+        self.init_elements()    
+        self.check_for_config()
 
     def check_for_config(self):
         if path.isfile("./{0}/config.json".format(self.data["directory_name"])):
@@ -102,7 +104,7 @@ class Interface(Frame):
         }
 
     def add_language(self, lang, key):
-        self.menu_dropdown_language.add_radiobutton(label=lang, command=lambda: self.change_language(key))
+        self.menu_dropdown_language.add_radiobutton(label=lang, value=key, variable=self.default, command=lambda: self.change_language(key))
 
     def change_language(self, key):
         self._main.language = key

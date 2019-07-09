@@ -29,7 +29,6 @@ class Config:
         _index = _requests.get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/conversion_tables/index.json")
         _data_url = _index.json()[table]
         _data = _requests.get(_data_url)
-        print(_data)
         return _data.json()      
 
 class Decoder:
@@ -74,16 +73,17 @@ class Main:
         self.language = "en"
         self.run = True
         self.directory = directory
+        self.configurator = Config(self.directory)
+        self.language = self.configurator.load().get("language", "en")
 
     def start_siva(self, packaged_data, interface):
         RPC = Presence('596381603522150421')
         RPC.connect()
 
-        configurator = Config(self.directory)
-        configurator.save(packaged_data)
-        config = configurator.load()
+        self.configurator.save(packaged_data)
+        config = self.configurator.load()
 
-        platform_enum_conversion_table = configurator.get_conversion_table("platform")
+        platform_enum_conversion_table = self.configurator.get_conversion_table("platform")
 
         requests = Requests(config["api_token"], interface)
         decoder = Decoder(self.directory, requests.headers)
@@ -102,9 +102,9 @@ class Main:
                     return
 
                 last_played_character = get_last_played_id(user_membership_type, user_membership_id, requests)
-                image_conversion_table = configurator.get_conversion_table("image")
-                state_conversion_table = configurator.get_conversion_table("state")
-                details_conversion_table = configurator.get_conversion_table("details")
+                image_conversion_table = self.configurator.get_conversion_table("image")
+                state_conversion_table = self.configurator.get_conversion_table("state")
+                details_conversion_table = self.configurator.get_conversion_table("details")
 
                 activity_data = requests.get(ACTIVITY_LOOKUP.format(user_membership_type, user_membership_id, last_played_character))
                 activity_hash = activity_data["Response"]["activities"]["data"]["currentActivityHash"]
@@ -115,8 +115,8 @@ class Main:
                 mode_data = decoder.decode_hash(mode_hash, "DestinyActivityModeDefinition", self.language)
 
                 # Default Arguments
-                orbit_translation = configurator.get_conversion_table("orbit_translation")[self.language]
-                details, state = orbit_translation
+                orbit_translation = self.configurator.get_conversion_table("orbit_translation")[self.language]
+                details, state = orbit_translation, orbit_translation
                 party_size = [1,1]
                 picture, timer = "in_orbit", time.time()
 

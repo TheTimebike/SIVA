@@ -7,8 +7,6 @@ from os import path, mkdir
 from webbrowser import open_new_tab
 import json
 
-
-
 class Interface(Frame):
     def __init__(self, master=None, data={}):
         Frame.__init__(self, master)
@@ -108,6 +106,12 @@ class Interface(Frame):
 
     def change_language(self, key):
         self._main.language = key
+        self._main.configurator.save({
+            "api_token": self.token_box.get(),
+            "platform": self.option_menu_default.get(),
+            "username": self.username_box.get(),
+            "language": self._main.language
+        })
 
     def light_mode(self):
         text_colour = "black"
@@ -142,7 +146,8 @@ class Interface(Frame):
         packaged_data = {
             "api_token": self.token_box.get(),
             "platform": self.option_menu_default.get(),
-            "username":self.username_box.get()
+            "username": self.username_box.get(),
+            "language": self._main.language
         }
         self.thread = Thread(target=self._main.start_siva, args=(packaged_data,self))
         self.thread.daemon = True

@@ -17,6 +17,7 @@ class Interface(Frame):
         self.data = data        
         self.init_elements()
         self.check_for_config()
+        self._main = Main()
 
     def check_for_config(self):
         if path.isfile("./{0}/config.json".format(self.data["directory_name"])):
@@ -130,7 +131,6 @@ class Interface(Frame):
             "platform": self.option_menu_default.get(),
             "username":self.username_box.get()
         }
-        self._main = Main()
         self.thread = Thread(target=self._main.start_siva, args=(packaged_data,self))
         self.thread.daemon = True
         self.thread.start()

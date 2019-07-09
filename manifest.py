@@ -5,7 +5,18 @@ class Manifest:
 	def __init__(self, headers=None):
 		self.headers = headers
 		self.manifests = {
-			'en': ''
+			'en': '',
+			'fr': '', 
+			'es': '', 
+			'de': '', 
+			'it': '', 
+			'ja': '', 
+			'pt-br': '', 
+			'es-mx': '',
+			'ru': '', 
+			'pl': '', 
+			'zh-cht': ''
+}
 		}
 		
 	def _decode_hash(self, hash, definition, language):

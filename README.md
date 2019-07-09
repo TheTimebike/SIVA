@@ -23,24 +23,11 @@ If you are on PC using BattleNet, ensure to include your battle-tag. For example
 
 SIVA now supports multiple languages using data collected directly from the Bungie API, ensuring that all translations are accurate.
 
-Navigate to the "Language" tab to switch to another language. It can take up to 60 seconds for Discord to update to the new language.
+Navigate to the "Languages" tab to switch to another language. It can take up to 60 seconds for Discord to update to the new language.
 
 ![Language](https://raw.githubusercontent.com/TheTimebike/SIVA/master/images/interface_language.PNG)
 
-SIVA supports:
-English
-Spanish
-Spanish-Mexican
-French
-Italian
-German
-Polish
-Portuguese-Brazillian
-Russian
-Korean
-Japanese
-Chinese Traditional
-Chinese Simplified
+SIVA supports: English, Spanish, Spanish-Mexican, French, Italian, German, Polish, Portuguese-Brazillian, Russian, Korean, Japanese, Chinese Traditional and Chinese Simplified
 
 ## Interface
 

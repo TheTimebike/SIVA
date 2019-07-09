@@ -1,6 +1,6 @@
 from tkinter import Frame, Label, OptionMenu, Entry, Button, Tk, StringVar, END, messagebox, Menu
-from Main import Main
-from update import update
+from modules.Main import Main
+from modules.update import update
 from threading import Thread
 from requests import get
 from os import path, mkdir

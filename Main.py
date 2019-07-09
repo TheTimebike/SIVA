@@ -4,7 +4,7 @@ import requests as _requests
 from pypresence import Presence
 import time, datetime
 from os import mkdir, path
-from manifest import Manifest
+from modules.manifest import Manifest
 
 BASE_ROUTE = "https://www.bungie.net/Platform"
 ACTIVITY_LOOKUP = BASE_ROUTE + "/Destiny2/{0}/Profile/{1}/Character/{2}/?components=CharacterActivities"

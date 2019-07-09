@@ -12,7 +12,7 @@ import json
 class Interface(Frame):
     def __init__(self, master=None, data={}):
         Frame.__init__(self, master)
-        self.version = "0.2.1"
+        self.version = "0.3.1"
         self.master.title(data["window_name"])
         self.data = data        
         self.init_elements()

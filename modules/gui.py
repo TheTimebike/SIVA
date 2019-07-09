@@ -17,7 +17,7 @@ class Interface(Frame):
         self.data = data        
         self.init_elements()
         self.check_for_config()
-        self._main = Main()
+        self._main = Main(self.data["directory_name"])
 
     def check_for_config(self):
         if path.isfile("./{0}/config.json".format(self.data["directory_name"])):
@@ -40,6 +40,7 @@ class Interface(Frame):
         self.menu_dropdown_themes = Menu(self.menubar)
         self.menu_dropdown_links = Menu(self.menubar)
         self.menu_dropdown_help = Menu(self.menubar)
+        self.menu_dropdown_language = Menu(self.menubar)
 
         self.menu_dropdown_siva.add_command(label="Start", command=lambda: self.start_service())
         self.menu_dropdown_siva.add_command(label="Stop", command=lambda: self.stop_service())
@@ -54,10 +55,16 @@ class Interface(Frame):
 
         self.menu_dropdown_help.add_command(label="About", command=lambda: messagebox.showinfo("SIVA", "SIVA:\nVersion: {0}\nCreator: u/TheTimebike".format(self.version)))
 
+        language_conversion_table = self.get_conversion_table("language")
+
+        for lang, key in language_conversion_table.items():
+            self.add_language(lang, key)
+
         self.menubar.add_cascade(label="SIVA", menu=self.menu_dropdown_siva)
         self.menubar.add_cascade(label="Themes", menu=self.menu_dropdown_themes)
         self.menubar.add_cascade(label="Links", menu=self.menu_dropdown_links)
         self.menubar.add_cascade(label="Help", menu=self.menu_dropdown_help)
+        self.menubar.add_cascade(label="Languages", menu=self.menu_dropdown_language)
 
         if self.data["version"] != self.version:
             self.menubar.add_command(label="Update", command=lambda:update(self))
@@ -95,6 +102,12 @@ class Interface(Frame):
             "optionmenus": [self.option_menu],
             "buttons": [self.start_button, self.token_button]
         }
+
+    def add_language(self, lang, key):
+        self.menu_dropdown_language.add_command(label=lang, command=lambda: self.change_language(key))
+
+    def change_language(self, key):
+        self._main.language = key
 
     def light_mode(self):
         text_colour = "black"

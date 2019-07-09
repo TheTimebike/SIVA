@@ -4,6 +4,7 @@ from modules.manifest_reader import ManifestReader
 class Manifest:
 	def __init__(self, directory, headers=None):
 		self.headers = headers
+		self.directory = directory
 		self.manifests = {
 			'en': '',
 			'fr': '', 
@@ -15,7 +16,9 @@ class Manifest:
 			'es-mx': '',
 			'ru': '', 
 			'pl': '', 
-			'zh-cht': ''
+			'ko': '',
+			'zh-cht': '',
+			'zh-chs': ''
 		}
 		
 	def _decode_hash(self, hash, definition, language):
@@ -42,8 +45,7 @@ class Manifest:
 			print("Language Not Found")
 		
 		manifestJson = requests.get("https://www.bungie.net/Platform/Destiny2/Manifest/", headers=self.headers).json()
-		print("here")
-		print(manifestJson['Response']['mobileWorldContentPaths'])
+		print(manifestJson)
 		manifestUrl = 'https://www.bungie.net' + manifestJson['Response']['mobileWorldContentPaths'][language]
 		manifestFileName = "./{0}/".format(self.directory) + manifestUrl.split('/')[-1]
 		

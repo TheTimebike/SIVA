@@ -5,6 +5,7 @@ from pypresence import Presence
 import time, datetime
 from os import mkdir, path
 from modules.manifest import Manifest
+import traceback
 
 BASE_ROUTE = "https://www.bungie.net/Platform"
 ACTIVITY_LOOKUP = BASE_ROUTE + "/Destiny2/{0}/Profile/{1}/Character/{2}/?components=CharacterActivities"
@@ -31,8 +32,8 @@ class Config:
         return _data.json()      
 
 class Decoder:
-    def __init__(self, headers):
-        self._manifest = Manifest(headers)
+    def __init__(self, directory, headers):
+        self._manifest = Manifest(directory, headers)
 
     def decode_hash(self, hash, definition, language):
         return self._manifest._decode_hash(hash, definition, language)
@@ -55,10 +56,9 @@ def get_last_played_id(membershipType, membershipID, requests):
     for key, attr in character_data["Response"]["characters"]["data"].items():
         epoch_character_table[convert_datestring_to_epoch(attr["dateLastPlayed"])] = key
 
-    [return id for epoch, id in epoch_character_table.items() if epoch == max(epoch_character_table.keys())]
-    #for epoch, id in epoch_character_table.items():
-    #    if epoch == max(epoch_character_table.keys()):
-    #        return id
+    for epoch, id in epoch_character_table.items():
+        if epoch == max(epoch_character_table.keys()):
+            return id
 
 def convert_datestring_to_epoch(datestring):
     unix_epoch = datetime.datetime(1970, 1, 1)
@@ -68,6 +68,7 @@ def convert_datestring_to_epoch(datestring):
 
 class Main:
     def __init__(self, directory):
+        self.language = "en"
         self.run = True
         self.directory = directory
 
@@ -82,7 +83,7 @@ class Main:
         platform_enum_conversion_table = configurator.get_conversion_table("platform")
 
         requests = Requests(config["api_token"], interface)
-        decoder = Decoder(requests.headers)
+        decoder = Decoder(self.directory, requests.headers)
 
         user_membership_type = platform_enum_conversion_table[config["platform"]]
         user_membership_data = requests.get(MEMBERSHIP_ID_LOOKUP.format(user_membership_type, config["username"]))["Response"]
@@ -104,10 +105,11 @@ class Main:
 
                 activity_data = requests.get(ACTIVITY_LOOKUP.format(user_membership_type, user_membership_id, last_played_character))
                 activity_hash = activity_data["Response"]["activities"]["data"]["currentActivityHash"]
-                activity_data_decoded = decoder.decode_hash(activity_hash, "DestinyActivityDefinition", "en")
-
+                activity_data_decoded = decoder.decode_hash(activity_hash, "DestinyActivityDefinition", self.language)
+                activity_data_decoded_en = decoder.decode_hash(activity_hash, "DestinyActivityDefinition", "en")
+                
                 mode_hash = activity_data["Response"]["activities"]["data"]["currentActivityModeHash"]
-                mode_data = decoder.decode_hash(mode_hash, "DestinyActivityModeDefinition", "en")
+                mode_data = decoder.decode_hash(mode_hash, "DestinyActivityModeDefinition", self.language)
 
                 # Default Arguments
                 details, state = "In Orbit", "In Orbit"
@@ -117,7 +119,7 @@ class Main:
                 if mode_data != None:
                     details = mode_data["displayProperties"]["name"]
                     state = activity_data_decoded["displayProperties"].get("name", "In Orbit")
-                    picture = activity_data_decoded["displayProperties"]["name"].lower().replace(" ", "_")
+                    picture = activity_data_decoded_en["displayProperties"]["name"].lower().replace(" ", "_")
                     timer = convert_datestring_to_epoch(activity_data["Response"]["activities"]["data"]["dateActivityStarted"])
                     
                     for char in [",", "(", ")", ":"]:
@@ -135,5 +137,5 @@ class Main:
                     start=timer
                 )
                 time.sleep(30)
-            except Exception as ex:
-                print(ex)
+            except Exception as e:
+                print(traceback.format_exc())

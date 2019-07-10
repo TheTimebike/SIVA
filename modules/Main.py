@@ -47,7 +47,10 @@ class Requests:
         self.headers = {"X-API-Key": self.api_token}
 
     def get(self, request):
+        print(request)
         self._requestData = _requests.get(urllib.parse.quote(request, safe=':/?&=,.'), headers=self.headers).json()
+        if self._requestData.get("Response", False) == False:
+            print(self._requestData)
         if self._requestData.get("ErrorCode", False) == 2101:
             return self.interface.error("1")
         if self._requestData.get("ErrorCode", False) == 5:

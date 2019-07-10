@@ -47,7 +47,6 @@ class Requests:
         self.headers = {"X-API-Key": self.api_token}
 
     def get(self, request):
-        print(request)
         self._requestData = _requests.get(urllib.parse.quote(request, safe=':/?&=,.'), headers=self.headers).json()
         if self._requestData.get("Response", False) == False:
             print(self._requestData)
@@ -116,8 +115,12 @@ class Main:
                 activity_data_decoded = decoder.decode_hash(activity_hash, "DestinyActivityDefinition", self.language)
                 activity_data_decoded_en = decoder.decode_hash(activity_hash, "DestinyActivityDefinition", "en")
                 
+                print(activity_data_decoded_en)
+
                 mode_hash = activity_data["Response"]["activities"]["data"]["currentActivityModeHash"]
                 mode_data = decoder.decode_hash(mode_hash, "DestinyActivityModeDefinition", self.language)
+
+                print(mode_data)
 
                 # Default Arguments
                 orbit_translation = self.configurator.get_conversion_table("orbit_translation")[self.language]
@@ -137,6 +140,10 @@ class Main:
                     if activity_data_decoded["isPvP"]:
                         details = "Crucible, " + mode_data["displayProperties"]["name"]
                         picture = "crucible"
+
+                elif activity_data_decoded_en["displayProperties"]["name"] == "Classified":
+                    details = activity_data_decoded["displayProperties"]["name"]
+                    state = activity_data_decoded["displayProperties"]["description"]
 
                 RPC.update(
                     state=state_conversion_table.get(state, state), 

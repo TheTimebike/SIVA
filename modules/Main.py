@@ -144,6 +144,7 @@ class Main:
                 elif activity_data_decoded_en["displayProperties"]["name"] == "Classified":
                     details = activity_data_decoded["displayProperties"]["name"]
                     state = activity_data_decoded["displayProperties"]["description"]
+                    picture = "classified"
 
                 RPC.update(
                     state=state_conversion_table.get(state, state), 

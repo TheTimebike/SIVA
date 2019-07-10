@@ -1,5 +1,7 @@
 # SIVA
 
+[Read the changelog here.](https://github.com/TheTimebike/SIVA/changelog.md)
+
 SIVA, or the Strategic Integration Via Activities service, is an application that integrates your Destiny 2 experience with Discords rich presence features. When running, your Discord server-mates will be able to see what activity you are in and how many people there are in your fireteam for any activity.
 
 SIVA comes with a custom built GUI that makes it especially easy to use, and saves your options into a config file that loads up on the next reload, meaning you dont have to type in your information constantly.

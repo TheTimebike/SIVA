@@ -1,4 +1,4 @@
-from tkinter import Frame, Label, OptionMenu, Entry, Button, Tk, StringVar, END, messagebox, Menu
+from tkinter import Frame, Label, OptionMenu, Entry, Button, Tk, StringVar, END, messagebox, Menu, BooleanVar
 from modules.Main import Main
 from modules.update import update
 from threading import Thread
@@ -10,27 +10,34 @@ import json
 class Interface(Frame):
     def __init__(self, master=None, data={}):
         Frame.__init__(self, master)
-        self.version = "0.3.3"
+        self.version = "0.3.4"
         self.master.title(data["window_name"])
         self.data = data    
         self._main = Main(self.data["directory_name"])
         self.default = StringVar()
         self.default.set(self._main.language)
+        self.load_config()
         self.init_elements()    
-        self.check_for_config()
+        self.fill_from_config()
 
-    def check_for_config(self):
+    def load_config(self):
         if path.isfile("./{0}/config.json".format(self.data["directory_name"])):
             with open("./{0}/config.json".format(self.data["directory_name"]), "r") as out:
                 self.config = json.load(out)
-            
-            self.token_box.delete(0,END)
-            self.token_box.insert(0,self.config["api_token"])
 
-            self.option_menu_default.set(self.config["platform"])
+    def fill_from_config(self):
+        self.token_box.delete(0,END)
+        self.token_box.insert(0,self.config["api_token"])
 
-            self.username_box.delete(0,END)
-            self.username_box.insert(0,self.config["username"])
+        self.option_menu_default.set(self.config["platform"])
+
+        self.username_box.delete(0,END)
+        self.username_box.insert(0,self.config["username"])
+
+        if self.config.get("autostart", False) == False:
+            self.config["autostart"] = False
+        if self.config.get("autostart", False) == True:
+            self.start_service()
 
     def init_elements(self):
         self.menubar = Menu(self.master)
@@ -44,6 +51,10 @@ class Interface(Frame):
 
         self.menu_dropdown_siva.add_command(label="Start", command=lambda: self.start_service())
         self.menu_dropdown_siva.add_command(label="Stop", command=lambda: self.stop_service())
+
+        self.auto_start = BooleanVar()
+        self.auto_start.set(self.config.get("autostart", False))
+        self.menu_dropdown_siva.add_checkbutton(label="Autostart", onvalue=True, offvalue=False, variable=self.auto_start, command=lambda: self.start_service())
 
         self.menu_dropdown_themes.add_command(label="Light Theme", command=lambda: self.light_mode())
         self.menu_dropdown_themes.add_command(label="Dark Theme", command=lambda: self.dark_mode())
@@ -112,7 +123,8 @@ class Interface(Frame):
             "api_token": self.token_box.get(),
             "platform": self.option_menu_default.get(),
             "username": self.username_box.get(),
-            "language": self._main.language
+            "language": self._main.language,
+            "autostart": self.auto_start.get()
         })
 
     def light_mode(self):
@@ -149,7 +161,8 @@ class Interface(Frame):
             "api_token": self.token_box.get(),
             "platform": self.option_menu_default.get(),
             "username": self.username_box.get(),
-            "language": self._main.language
+            "language": self._main.language,
+            "autostart": self.auto_start.get()
         })
         self.thread = Thread(target=self._main.start_siva, args=(self,))
         self.thread.daemon = True

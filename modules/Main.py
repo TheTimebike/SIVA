@@ -115,13 +115,10 @@ class Main:
                 activity_data_decoded = decoder.decode_hash(activity_hash, "DestinyActivityDefinition", self.language)
                 activity_data_decoded_en = decoder.decode_hash(activity_hash, "DestinyActivityDefinition", "en")
                 
-                print(activity_data_decoded_en)
 
                 mode_hash = activity_data["Response"]["activities"]["data"]["currentActivityModeHash"]
                 mode_data = decoder.decode_hash(mode_hash, "DestinyActivityModeDefinition", self.language)
-
-                print(mode_data)
-
+                
                 # Default Arguments
                 orbit_translation = self.configurator.get_conversion_table("orbit_translation")[self.language]
                 details, state = orbit_translation, orbit_translation
@@ -141,10 +138,10 @@ class Main:
                         details = "Crucible, " + mode_data["displayProperties"]["name"]
                         picture = "crucible"
 
-                elif activity_data_decoded_en["displayProperties"]["name"] == "Classified":
-                    details = activity_data_decoded["displayProperties"]["name"]
-                    state = activity_data_decoded["displayProperties"]["description"]
-                    picture = "classified"
+                    if activity_data_decoded_en["displayProperties"]["name"] == "Classified":
+                        details = activity_data_decoded["displayProperties"]["name"]
+                        state = activity_data_decoded["displayProperties"]["description"]
+                        picture = "classified"
 
                 RPC.update(
                     state=state_conversion_table.get(state, state), 

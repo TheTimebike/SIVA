@@ -4,13 +4,15 @@ from modules.update import update
 from threading import Thread
 from requests import get
 from os import path, mkdir
+from sys import exit
 from webbrowser import open_new_tab
 import json
+from infi.systray import SysTrayIcon
 
 class Interface(Frame):
     def __init__(self, master=None, data={}):
         Frame.__init__(self, master)
-        self.version = "0.3.4"
+        self.version = "0.4.0"
         self.master.title(data["window_name"])
         self.data = data    
         self._main = Main(self.data["directory_name"])
@@ -20,10 +22,35 @@ class Interface(Frame):
         self.init_elements()    
         self.fill_from_config()
 
+        menu_options = (("Open Window", None, self.back),("Start", None, self.start_service),("Stop", None, self.stop_service))
+        self.systray = SysTrayIcon("./{0}/icon.ico".format(self.data["directory_name"]), "SIVA", menu_options, on_quit=self.quit_service)
+        self.systray.start()
+        self.master.protocol("WM_DELETE_WINDOW", self.vanish)
+
+    def quit_service(self, e=None):
+        exit(0)
+
+    def vanish(self):
+        self.master.withdraw()
+        
+    def back(self, e=None):
+        self.master.update()
+        self.master.deiconify()
+
     def load_config(self):
         if path.isfile("./{0}/config.json".format(self.data["directory_name"])):
             with open("./{0}/config.json".format(self.data["directory_name"]), "r") as out:
                 self.config = json.load(out)
+        else:
+            with open("./{0}/config.json".format(self.data["directory_name"]), "w+") as out:
+                self.config = {
+                    "api_token": "",
+                    "platform": "PlayStation",
+                    "username": "",
+                    "language": "en",
+                    "autostart": False
+                }
+                json.dump(self.config, out, indent=4)
 
     def fill_from_config(self):
         self.token_box.delete(0,END)
@@ -156,7 +183,7 @@ class Interface(Frame):
             element.configure(highlightthickness=0, background=background_colour, foreground=text_colour, activebackground=background_colour, activeforeground=text_colour) 
 
 
-    def start_service(self):
+    def start_service(self, e=None):
         self._main.configurator.save({
             "api_token": self.token_box.get(),
             "platform": self.option_menu_default.get(),
@@ -170,7 +197,7 @@ class Interface(Frame):
 
         self.start_button.config(text="Stop!", command=lambda: self.stop_service())
 
-    def stop_service(self):
+    def stop_service(self, e=None):
         self._main.run = False
         self.start_button.config(text="Start!", command=lambda: self.start_service())
 
@@ -191,11 +218,12 @@ def start():
     data = get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/siva.json").json()
     root = Tk()
     root.geometry("540x170")
-    interface = Interface(root, data)
-    root.resizable(False, False)
 
     if not path.exists("./{0}/".format(data["directory_name"])):
         mkdir("./{0}".format(data["directory_name"]))
+
+    interface = Interface(root, data)
+    root.resizable(False, False)
 
     if not path.isfile("./{0}/icon.ico".format(data["directory_name"])):
         _data = get(data["icon_url"])

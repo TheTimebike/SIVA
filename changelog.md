@@ -1,3 +1,8 @@
+## [0.4] - 2019-07-23
+### Added
+ - Added functionality to run as a service in the system tray.
+ - Fixed a bug with config generation.
+
 ## [0.3.4] - 2019-07-13
 ### Added
  - Fixed error with classified activities that would trigger when in orbit.

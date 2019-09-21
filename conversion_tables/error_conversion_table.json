@@ -2,8 +2,9 @@
     "error_window_name": "SIVA",
     "errors": {
         "1": "Sorry, but the token you provided was invalid! Please check that you included the entire API key. If you dont have one, click the button next to the token box.",
-        "2": "Sorry, but the account could not be found! Please check that you included your Battletag if you play on BattleNet.",
+        "2": "Sorry, but the account could not be found!",
         "3": "Sorry, but the Bungie API could not be reached, probably due to maintenence. Please try again later.",
-        "4": "Sorry, but SIVA was not able to connect to the internet. Please check your connection and try again later."
+        "4": "Sorry, but SIVA was not able to connect to the internet. Please check your connection and try again later.",
+        "5": "Sorry, but it appears you are using BattleNet as your platform option. After October 1st BattleNet users will be moved to Steam.
     }
 }

@@ -45,7 +45,7 @@ class Interface(Frame):
             with open("./{0}/config.json".format(self.data["directory_name"]), "w+") as out:
                 self.config = {
                     "api_token": "",
-                    "platform": "PlayStation",
+                    "platform": "Playstation",
                     "username": "",
                     "language": "en",
                     "autostart": False

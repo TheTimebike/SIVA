@@ -1,5 +1,7 @@
 {
-    "Playstation": "2",
     "Xbox": "1",
-    "BattleNet": "4"
+    "Playstation": "2",
+    "Steam": "3",
+    "BattleNet": "4",
+    "Stadia": "5"
 }

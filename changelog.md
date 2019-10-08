@@ -1,3 +1,8 @@
+## [1.0] - 2019-09-30
+### Added
+ - Added platform options for Steam and Stadia. BattleNet will not be removed until a future update and Stadia will not work until it is released.
+ - Removed some unneccessary files
+
 ## [0.4] - 2019-07-23
 ### Added
  - Added functionality to run as a service in the system tray.

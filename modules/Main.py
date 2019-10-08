@@ -48,8 +48,9 @@ class Requests:
 
     def get(self, request):
         self._requestData = _requests.get(urllib.parse.quote(request, safe=':/?&=,.'), headers=self.headers).json()
+        #print(json.dumps(self._requestData, indent=4))
         if self._requestData.get("Response", False) == False:
-            print(self._requestData)
+            print(json.dumps(self._requestData, indent=4))
         if self._requestData.get("ErrorCode", False) == 2101:
             return self.interface.error("1")
         if self._requestData.get("ErrorCode", False) == 5:
@@ -94,10 +95,14 @@ class Main:
         decoder = Decoder(self.directory, requests.headers)
         user_membership_type = platform_enum_conversion_table[config["platform"]]
         user_membership_data = requests.get(MEMBERSHIP_ID_LOOKUP.format(user_membership_type, config["username"]))["Response"]
+        for user_data in user_membership_data:
+            if user_data["displayName"] == config["username"]: # Checking to see if its the same case, as of 9/9/19 Bungie API doesnt respect case-sensitivity.
+                print(json.dumps(user_data, indent=4))
+                user_membership_data = user_data
         if len(user_membership_data) == 0:
             return interface.error("2")
 
-        user_membership_id = user_membership_data[0]["membershipId"]
+        user_membership_id = user_membership_data["membershipId"]
 
         while True:
             try:

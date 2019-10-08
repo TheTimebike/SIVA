@@ -12,7 +12,7 @@ from infi.systray import SysTrayIcon
 class Interface(Frame):
     def __init__(self, master=None, data={}):
         Frame.__init__(self, master)
-        self.version = "0.4.0"
+        self.version = "1.0.0"
         self.master.title(data["window_name"])
         self.data = data    
         self._main = Main(self.data["directory_name"])
@@ -121,7 +121,7 @@ class Interface(Frame):
 
         self.option_menu_default = StringVar()
         self.option_menu_default.set("Playstation")
-        self.option_menu = OptionMenu(self.master, self.option_menu_default, "BattleNet", "Playstation", "Xbox")
+        self.option_menu = OptionMenu(self.master, self.option_menu_default, "BattleNet", "Playstation", "Xbox", "Steam", "Stadia")
         self.option_menu.configure(highlightthickness=0)
         self.option_menu.place(x=8, y=35)
 
@@ -232,3 +232,5 @@ def start():
                 f.write(_data.content)
     root.iconbitmap("./{0}/icon.ico".format(data["directory_name"]))
     root.mainloop()
+
+start()

@@ -67,6 +67,16 @@ def get_last_played_id(membershipType, membershipID, requests):
         if epoch == max(epoch_character_table.keys()):
             return id
 
+def get_all_characters_light_level(membershipType, membershipID, requests, decoder):
+    character_data = requests.get(CHARACTER_LOOKUP.format(membershipType, membershipID))
+    character_dict = {}
+    for key, attr in character_data["Response"]["characters"]["data"].items():
+        raceDecoded = decoder.decode_hash(attr["raceHash"], "DestinyRaceDefinition", "en")["displayProperties"]["name"]
+        classDecoded = decoder.decode_hash(attr["classHash"], "DestinyClassDefinition", "en")["displayProperties"]["name"]
+        genderDecoded = decoder.decode_hash(attr["genderHash"], "DestinyGenderDefinition", "en")["displayProperties"]["name"]
+        character_dict[key] = [attr["light"], raceDecoded, classDecoded, genderDecoded]
+    return character_dict
+
 def convert_datestring_to_epoch(datestring):
     unix_epoch = datetime.datetime(1970, 1, 1)
     log_dt = datetime.datetime.strptime(datestring.replace("T", " ").replace("Z", ""), "%Y-%m-%d %H:%M:%S")
@@ -95,13 +105,24 @@ class Main:
         decoder = Decoder(self.directory, requests.headers)
         user_membership_type = platform_enum_conversion_table[config["platform"]]
         user_membership_data = requests.get(MEMBERSHIP_ID_LOOKUP.format(user_membership_type, config["username"]))["Response"]
+        potential_users_list = []
+        print(json.dumps(user_membership_data, indent=4))
+        users_character_data = {}
         for user_data in user_membership_data:
             if user_data["displayName"] == config["username"]: # Checking to see if its the same case, as of 9/9/19 Bungie API doesnt respect case-sensitivity.
-                print(json.dumps(user_data, indent=4))
-                user_membership_data = user_data
-        if len(user_membership_data) == 0:
+                potential_users_list.append(user_data)
+                users_character_data[user_data["membershipId"]] = get_all_characters_light_level(user_membership_type, user_data["membershipId"], requests, decoder)
+        
+        print(json.dumps(users_character_data, indent=4))
+        if len(potential_users_list) == 0:
             return interface.error("2")
+        elif len(potential_users_list) > 1:
+            #Do shit to select from list
+            user_membership_data = potential_users_list[0]            
+        elif len(potential_users_list) == 1:
+            user_membership_data = potential_users_list[-1]
 
+        #user_membership_id = "4611686018468394612"#user_membership_data["membershipId"]
         user_membership_id = user_membership_data["membershipId"]
 
         while True:

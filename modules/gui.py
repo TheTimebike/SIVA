@@ -1,4 +1,4 @@
-from tkinter import Frame, Label, OptionMenu, Entry, Button, Tk, StringVar, END, messagebox, Menu, BooleanVar
+from tkinter import Frame, Label, OptionMenu, Entry, Button, Tk, StringVar, END, messagebox, Menu, BooleanVar, Toplevel, Listbox, SINGLE
 from modules.Main import Main
 from modules.update import update
 from threading import Thread
@@ -12,7 +12,7 @@ from infi.systray import SysTrayIcon
 class Interface(Frame):
     def __init__(self, master=None, data={}):
         Frame.__init__(self, master)
-        self.version = "1.0.0"
+        self.version = "1.1.0"
         self.master.title(data["window_name"])
         self.data = data    
         self._main = Main(self.data["directory_name"])
@@ -61,9 +61,9 @@ class Interface(Frame):
         self.username_box.delete(0,END)
         self.username_box.insert(0,self.config["username"])
 
-        if self.config.get("autostart", False) == False:
+        if self.config.get("autostart", None) == None:
             self.config["autostart"] = False
-        if self.config.get("autostart", False) == True:
+        if self.config.get("autostart", None) == True:
             self.start_service()
 
     def init_elements(self):
@@ -121,7 +121,7 @@ class Interface(Frame):
 
         self.option_menu_default = StringVar()
         self.option_menu_default.set("Playstation")
-        self.option_menu = OptionMenu(self.master, self.option_menu_default, "BattleNet", "Playstation", "Xbox", "Steam", "Stadia")
+        self.option_menu = OptionMenu(self.master, self.option_menu_default, "Playstation", "Xbox", "Steam", "Stadia")
         self.option_menu.configure(highlightthickness=0)
         self.option_menu.place(x=8, y=35)
 
@@ -208,11 +208,38 @@ class Interface(Frame):
         return _data.json()      
 
     def error(self, error_enum):
-        self._main.run = False
-        self.start_button.config(text="Start!", command=lambda: self.start_service())
+        self.stop_service()
         error_conversion_table = self.get_conversion_table("error")
         messagebox.showinfo(error_conversion_table["error_window_name"], error_conversion_table["errors"][error_enum])
         return None
+
+    def create_pick_account_interface(self, acc_list):
+        self.select_acc_window = SubWindow(self.master, acc_list, self._main)
+        self.select_acc_window.master.iconbitmap("./{0}/icon.ico".format(self.data["directory_name"]))
+
+class SubWindow():
+    def __init__(self, main_window, acc_list, main):
+        self.master = Toplevel(main_window)
+        self.master.resizable(False, False)
+        self.master.title("Select Your Account")
+        self.main = main
+
+        self.len_max = 50
+        for m in acc_list:
+            if len(m[0]) > self.len_max:
+                self.len_max = len(m[0])
+            
+        self.listbox = Listbox(self.master, width=self.len_max, selectmode=SINGLE)
+        self.listbox.grid(row=0, column=1)
+        self.listbox.bind('<Double-Button>', self.selected_event)
+        self.listbox_list = []
+        for item in acc_list:
+            self.listbox.insert(END, item[0])
+            self.listbox_list.append(item[1])
+        
+    def selected_event(self, e=None):
+        self.main.set_membershipID(self.listbox_list[self.listbox.curselection()[0]])
+        self.master.destroy()
 
 def start():
     data = get("https://raw.githubusercontent.com/TheTimebike/SIVA/master/siva.json").json()

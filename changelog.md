@@ -1,3 +1,9 @@
+## [1.1.0] - 2019-10-13
+### Added
+ - Support for Steam accounts that share a name.
+ - General performance improvements.
+### Removed
+ - BattleNet as platform option.
 ## [1.0] - 2019-09-30
 ### Added
  - Added platform options for Steam and Stadia. BattleNet will not be removed until a future update and Stadia will not work until it is released.

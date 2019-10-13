@@ -51,6 +51,7 @@ class Requests:
         #print(json.dumps(self._requestData, indent=4))
         if self._requestData.get("Response", False) == False:
             print(json.dumps(self._requestData, indent=4))
+            print(request)
         if self._requestData.get("ErrorCode", False) == 2101:
             return self.interface.error("1")
         if self._requestData.get("ErrorCode", False) == 5:
@@ -69,6 +70,7 @@ def get_last_played_id(membershipType, membershipID, requests):
 
 def get_all_characters_light_level(membershipType, membershipID, requests, decoder):
     character_data = requests.get(CHARACTER_LOOKUP.format(membershipType, membershipID))
+    print(CHARACTER_LOOKUP.format(membershipType, membershipID))
     character_dict = {}
     for key, attr in character_data["Response"]["characters"]["data"].items():
         raceDecoded = decoder.decode_hash(attr["raceHash"], "DestinyRaceDefinition", "en")["displayProperties"]["name"]
@@ -90,7 +92,9 @@ class Main:
         self.directory = directory
         self.configurator = Config(self.directory)
         self.language = self.configurator.load().get("language", "en")
-        
+
+    def set_membershipID(self, membershipID):
+        self.user_membership_id = membershipID        
 
     def start_siva(self, interface):
         
@@ -103,27 +107,34 @@ class Main:
 
         requests = Requests(config["api_token"], interface)
         decoder = Decoder(self.directory, requests.headers)
+        if config["platform"].lower() == "battlenet":
+            return interface.error("5")
         user_membership_type = platform_enum_conversion_table[config["platform"]]
         user_membership_data = requests.get(MEMBERSHIP_ID_LOOKUP.format(user_membership_type, config["username"]))["Response"]
         potential_users_list = []
-        print(json.dumps(user_membership_data, indent=4))
-        users_character_data = {}
+        users_list = []
         for user_data in user_membership_data:
-            if user_data["displayName"] == config["username"]: # Checking to see if its the same case, as of 9/9/19 Bungie API doesnt respect case-sensitivity.
+            if True:#user_data["displayName"] == config["username"]: # Checking to see if its the same case, as of 9/9/19 Bungie API doesnt respect case-sensitivity.
                 potential_users_list.append(user_data)
-                users_character_data[user_data["membershipId"]] = get_all_characters_light_level(user_membership_type, user_data["membershipId"], requests, decoder)
-        
-        print(json.dumps(users_character_data, indent=4))
+                users_list.append(
+                    [
+                        "{0} | {1} | {2}".format(user_data["displayName"], config["platform"], user_data["membershipId"]), 
+                        user_data["membershipId"]
+                    ]
+                )
+
+        self.user_membership_id = None
+
         if len(potential_users_list) == 0:
             return interface.error("2")
         elif len(potential_users_list) > 1:
-            #Do shit to select from list
-            user_membership_data = potential_users_list[0]            
+            interface.create_pick_account_interface(users_list)
         elif len(potential_users_list) == 1:
             user_membership_data = potential_users_list[-1]
+            self.user_membership_id = user_membership_data["membershipId"]
 
-        #user_membership_id = "4611686018468394612"#user_membership_data["membershipId"]
-        user_membership_id = user_membership_data["membershipId"]
+        while self.user_membership_id == None:
+            time.sleep(1)
 
         while True:
             try:
@@ -131,12 +142,12 @@ class Main:
                     RPC.close()
                     return
 
-                last_played_character = get_last_played_id(user_membership_type, user_membership_id, requests)
+                last_played_character = get_last_played_id(user_membership_type, self.user_membership_id, requests)
                 image_conversion_table = self.configurator.get_conversion_table("image")
                 state_conversion_table = self.configurator.get_conversion_table("state")
                 details_conversion_table = self.configurator.get_conversion_table("details")
 
-                activity_data = requests.get(ACTIVITY_LOOKUP.format(user_membership_type, user_membership_id, last_played_character))
+                activity_data = requests.get(ACTIVITY_LOOKUP.format(user_membership_type, self.user_membership_id, last_played_character))
                 activity_hash = activity_data["Response"]["activities"]["data"]["currentActivityHash"]
                 activity_data_decoded = decoder.decode_hash(activity_hash, "DestinyActivityDefinition", self.language)
                 activity_data_decoded_en = decoder.decode_hash(activity_hash, "DestinyActivityDefinition", "en")
@@ -148,7 +159,6 @@ class Main:
                 # Default Arguments
                 orbit_translation = self.configurator.get_conversion_table("orbit_translation")[self.language]
                 details, state = orbit_translation, orbit_translation
-                party_size = [1,1]
                 picture, timer = "in_orbit", time.time()
 
                 if mode_data != None:

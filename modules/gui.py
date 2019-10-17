@@ -12,7 +12,7 @@ from infi.systray import SysTrayIcon
 class Interface(Frame):
     def __init__(self, master=None, data={}):
         Frame.__init__(self, master)
-        self.version = "1.1.0"
+        self.version = "1.2.0"
         self.master.title(data["window_name"])
         self.data = data    
         self._main = Main(self.data["directory_name"])
@@ -48,7 +48,8 @@ class Interface(Frame):
                     "platform": "Playstation",
                     "username": "",
                     "language": "en",
-                    "autostart": False
+                    "autostart": False,
+                    "id_search": False
                 }
                 json.dump(self.config, out, indent=4)
 
@@ -65,6 +66,9 @@ class Interface(Frame):
             self.config["autostart"] = False
         if self.config.get("autostart", None) == True:
             self.start_service()
+        if self.config.get("id_search", None) == None:
+            self.config["id_search"] = False
+        self.search_with_id.set(self.config["id_search"])
 
     def init_elements(self):
         self.menubar = Menu(self.master)
@@ -82,6 +86,10 @@ class Interface(Frame):
         self.auto_start = BooleanVar()
         self.auto_start.set(self.config.get("autostart", False))
         self.menu_dropdown_siva.add_checkbutton(label="Autostart", onvalue=True, offvalue=False, variable=self.auto_start, command=lambda: self.start_service())
+
+        self.search_with_id = BooleanVar()
+        self.search_with_id.set(self.config.get("id_search", False))
+        self.menu_dropdown_siva.add_checkbutton(label="Login With ID", onvalue=True, offvalue=False, variable=self.search_with_id)
 
         self.menu_dropdown_themes.add_command(label="Light Theme", command=lambda: self.light_mode())
         self.menu_dropdown_themes.add_command(label="Dark Theme", command=lambda: self.dark_mode())
@@ -189,7 +197,8 @@ class Interface(Frame):
             "platform": self.option_menu_default.get(),
             "username": self.username_box.get(),
             "language": self._main.language,
-            "autostart": self.auto_start.get()
+            "autostart": self.auto_start.get(),
+            "id_search": self.search_with_id.get()
         })
         self.thread = Thread(target=self._main.start_siva, args=(self,))
         self.thread.daemon = True

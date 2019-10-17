@@ -1,3 +1,6 @@
+## [1.2.0] - 2019-10-17
+### Added
+ - Support for account selection using ID. Enable this mode under the SIVA tab.
 ## [1.1.0] - 2019-10-13
 ### Added
  - Support for Steam accounts that share a name.

@@ -1,8 +1,8 @@
 {
     "window_name": "SIVA",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "icon_url": "https://raw.githubusercontent.com/TheTimebike/SIVA/master/SIVA.ico",
     "directory_name": "siva_files",
     "platforms": ["Playstation", "Xbox", "Steam", "Stadia"],
-    "version_url": "https://github.com/TheTimebike/SIVA/releases/download/v1.1.0/SIVA_v1.1.0.zip"
+    "version_url": "https://github.com/TheTimebike/SIVA/releases/download/v1.2.0/SIVA_v1.2.0.zip"
 }

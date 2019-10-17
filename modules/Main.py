@@ -110,28 +110,32 @@ class Main:
         if config["platform"].lower() == "battlenet":
             return interface.error("5")
         user_membership_type = platform_enum_conversion_table[config["platform"]]
-        user_membership_data = requests.get(MEMBERSHIP_ID_LOOKUP.format(user_membership_type, config["username"]))["Response"]
-        potential_users_list = []
-        users_list = []
-        for user_data in user_membership_data:
-            if True:#user_data["displayName"] == config["username"]: # Checking to see if its the same case, as of 9/9/19 Bungie API doesnt respect case-sensitivity.
-                potential_users_list.append(user_data)
-                users_list.append(
-                    [
-                        "{0} | {1} | {2}".format(user_data["displayName"], config["platform"], user_data["membershipId"]), 
-                        user_data["membershipId"]
-                    ]
-                )
+        if config.get("id_search", None) == False:
+            user_membership_data = requests.get(MEMBERSHIP_ID_LOOKUP.format(user_membership_type, config["username"]))["Response"]
+            potential_users_list = []
+            users_list = []
+            for user_data in user_membership_data:
+                if True:#user_data["displayName"] == config["username"]: # Checking to see if its the same case, as of 9/9/19 Bungie API doesnt respect case-sensitivity.
+                    potential_users_list.append(user_data)
+                    users_list.append(
+                        [
+                            "{0} | {1} | {2}".format(user_data["displayName"], config["platform"], user_data["membershipId"]), 
+                            user_data["membershipId"]
+                        ]
+                    )
 
-        self.user_membership_id = None
+            self.user_membership_id = None
 
-        if len(potential_users_list) == 0:
-            return interface.error("2")
-        elif len(potential_users_list) > 1:
-            interface.create_pick_account_interface(users_list)
-        elif len(potential_users_list) == 1:
-            user_membership_data = potential_users_list[-1]
-            self.user_membership_id = user_membership_data["membershipId"]
+            if len(potential_users_list) == 0:
+                return interface.error("2")
+            elif len(potential_users_list) > 1:
+                interface.create_pick_account_interface(users_list)
+            elif len(potential_users_list) == 1:
+                user_membership_data = potential_users_list[-1]
+                self.user_membership_id = user_membership_data["membershipId"]
+
+        if config.get("id_search", None) == True:    
+            self.user_membership_id = config["username"]
 
         while self.user_membership_id == None:
             time.sleep(1)
